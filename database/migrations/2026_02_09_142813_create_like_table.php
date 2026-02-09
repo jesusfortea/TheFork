@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('like', function (Blueprint $table) {
+        Schema::create('likes', function (Blueprint $table) {
             $table->id();
             $table->boolean('like');
 
             // -- Id restaurante -- //
             $table->unsignedBigInteger('id_restaurante');
-            $table->foreign('id_restaurante')->references('id')->on('restaurante')->onDelete('cascade');
+            $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('cascade');
 
             // -- Id user -- //
             $table->unsignedBigInteger('id_user');

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('resena', function (Blueprint $table) {
+        Schema::create('resenas', function (Blueprint $table) {
             $table->id();
             $table->text('comentario');
             $table->integer('puntuacion');
 
             // -- Id restaurante -- //
             $table->unsignedBigInteger('id_restaurante');
-            $table->foreign('id_restaurante')->references('id')->on('restaurante')->onDelete('cascade');
+            $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('cascade');
 
             $table->timestamps();
         });

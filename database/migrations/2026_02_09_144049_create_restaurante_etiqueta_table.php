@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('restaurante_etiqueta', function (Blueprint $table) {
+        Schema::create('restaurante_etiquetas', function (Blueprint $table) {
             
             // -- Esta tabla se crea porque un restaurante puede tener 
             // -- muchas etiquetas y una etiqueta puede tener muchos 
@@ -22,11 +22,11 @@ return new class extends Migration
 
             // -- Id restaurante -- //
             $table->unsignedBigInteger('id_restaurante');
-            $table->foreign('id_restaurante')->references('id')->on('restaurante')->onDelete('cascade');
+            $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('cascade');
             
             // -- Id etiqueta -- //
             $table->unsignedBigInteger('id_etiqueta');
-            $table->foreign('id_etiqueta')->references('id')->on('etiqueta')->onDelete('cascade');
+            $table->foreign('id_etiqueta')->references('id')->on('etiquetas')->onDelete('cascade');
             
             $table->timestamps();
         });
