@@ -1,9 +1,9 @@
 @extends('components.home')
 
-@section('title', 'Welcome')
+@section('title', 'TheFork | Home')
 @section('contenido')
     
-    <p>Hola desde welcome</p>
+    {{-- ¡EMPEZAR CODIGO DESDE AQUI! --}}
 
 
 @endsection
