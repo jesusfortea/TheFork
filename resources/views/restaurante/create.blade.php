@@ -5,14 +5,29 @@
     
     {{-- ¡EMPEZAR CODIGO DESDE AQUI! --}}
 
-    <div class="grid grid-cols-2 gap-5">
+    <div class="grid grid-cols-2 gap-5 p-5">
 
         <div>
-            <h1>Accede a millones de comensales y llena tus mesas vacías</h1>
+            <h1 class="text-5xl text-center w-full">Accede a millones de comensales y llena tus mesas vacías</h1>
+        
+            <br>
+
+            <ul class="p-5">
+
+                <li class="pt-2 pb-2 list-disc">Únete a la plataforma de reservas número 1</li>
+                <li class="pt-2 pb-2 list-disc">Abre tus reservas al instante en todos los canales: TheFork, TripAdvisor, tu sitio web, Facebook, Instagram y más</li>
+                <li class="pt-2 pb-2 list-disc">Atrae a más comensales con herramientas de marketing</li>
+
+            </ul>
+        
+            <br>
+            
+            <img src="{{ asset('media/imgTFM.webp') }}" alt="No se ha podido cargar la imagen">
+        
         </div>
 
         {{-- Formulario para crear un restaurante --}}
-        <form class="m-10 bg-[#00665a] p-5 rounded" action="" method="post">
+        <form class="bg-[#00665a] p-5 rounded" action="" method="post">
 
             <h1 class="m-10 text-3xl w-full text-white">Registrar mi restaurante</h1>
 
@@ -38,7 +53,7 @@
             <br><br>
 
             <label for="etiqueta" class="text-white">Etiquetas Insignia</label><br>
-            <div class="border-2 text-white rounded p-4 grid grid-cols-6 gap-5">
+            <div class="border-2 text-white rounded p-4 grid grid-cols-3 gap-5">
                 @foreach ($etiquetas as $etiqueta)
                     @if ($etiqueta->tipo == "Insignia")
                         <label class="block mb-2">
@@ -52,7 +67,7 @@
             <br>
 
             <label for="etiqueta" class="text-white">Etiquetas Descriptivas</label><br>
-            <div class="border-2 rounded p-4 grid grid-cols-6 gap-5">
+            <div class="border-2 rounded p-4 grid grid-cols-3 gap-5">
                 @foreach ($etiquetas as $etiqueta)
                     @if ($etiqueta->tipo == "Descriptivo")
                         <label class="block mb-2">
