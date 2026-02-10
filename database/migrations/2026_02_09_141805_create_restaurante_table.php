@@ -18,9 +18,12 @@ return new class extends Migration
             $table->text('imagen');
             $table->text('ubicacion');
             $table->integer('precio');
-            $table->text('tipo');
             $table->text('cheff');
             $table->text('menu');
+
+            // -- Id tipo de cocina -- //
+            $table->unsignedBigInteger('id_tipo');
+            $table->foreign('id_tipo')->references('id')->on('tipos')->onDelete('cascade');
 
             $table->timestamps();
         });
