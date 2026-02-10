@@ -18,7 +18,7 @@
         
         <nav class="border-b border-gray-100">
             <ul class="flex justify-end gap-4 px-10 py-2 text-[11px] font-bold text-teal-900 uppercase">
-                <li><a href="#" class="hover:underline flex items-center gap-1">
+                <li><a href="{{route('crear.restaurante')}}" class="hover:underline flex items-center gap-1">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.25.75a.75.75 0 0 1 .75.75V3h3.75a.75.75 0 0 1 .75.75v18a.75.75 0 0 1-.75.75H2.25a.75.75 0 0 1-.75-.75v-18A.75.75 0 0 1 2.25 3H6V1.5a.75.75 0 0 1 1.5 0V3h9V1.5a.75.75 0 0 1 .75-.75Z"></path></svg>
                     Registrar mi restaurante</a>
                 </li>
@@ -105,7 +105,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar flex-1 pl-2">
+            <div class="flex items-center gap-2 no-scrollbar flex-1 pl-2">
                 <button class="bg-[#00473d] text-white rounded-full px-5 py-2 text-[12px] font-bold flex items-center gap-2 whitespace-nowrap shadow-sm hover:bg-black transition">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
                     Todos los filtros
@@ -132,15 +132,22 @@
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
                 </button>
 
-                <button class="border border-gray-300 rounded-full px-4 py-2 text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:border-gray-800 transition bg-white">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600">
-                        <rect x="2" y="6" width="20" height="12" rx="2"></rect>
-                        <circle cx="12" cy="12" r="2"></circle>
-                        <path d="M6 12h.01M18 12h.01"></path>
-                    </svg>
-                    Precio
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
-                </button>
+                <div class="relative dropdown-container">
+                    <button onclick="toggleDropdown('price')" class="border border-gray-300 rounded-full px-4 py-2 text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:border-gray-800 transition bg-white">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600">
+                            <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                            <circle cx="12" cy="12" r="2"></circle>
+                            <path d="M6 12h.01M18 12h.01"></path>
+                        </svg>
+                        <span id="label-price">Precio</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
+                    </button>
+                    
+                    <div id="drop-price" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-200px z-300 max-h-320px overflow-y-auto no-scrollbar">
+                        <div id="price-grid" class="flex flex-col gap-1">
+                            </div>
+                    </div>
+                </div>
 
                 <button class="border border-gray-300 rounded-full px-4 py-2 text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:border-gray-800 transition bg-white">
                     <div class="bg-gray-800 text-white text-[8px] font-black px-1 rounded-sm flex items-center justify-center h-4 w-4 tracking-tighter">
@@ -148,8 +155,6 @@
                     </div>
                     INSIDER
                 </button>
-
-
             </div>        
         </div>
     </header>
@@ -157,6 +162,74 @@
     <main>
         @yield('contenido')
     </main>
+
+    <footer class="bg-black text-white py-12 px-10">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+            
+            <div>
+                <h3 class="font-bold text-lg mb-6">Descargar aplicación</h3>
+                <div class="flex flex-col gap-3">
+                    <div class="border border-gray-600 rounded-lg p-2 flex items-center w-40 cursor-pointer">
+                        <a href="#">
+                            <img src="{{ asset('media/app_store.png') }}" alt="App Store" class="h-10 w-auto mr-2">
+                        </a>
+                        
+                        <div class="text-[9px]">Download on the <br><span class="text-sm font-bold">App Store</span></div>
+                    </div>
+                </div><br>
+
+                    <div class="border border-gray-600 rounded-lg p-2 flex items-center w-40 cursor-pointer">
+                        <a href="#">
+                            <img src="{{ asset('media/play_store.png') }}" alt="Google Play" class="h-6 w-auto mr-2">
+                        </a>
+                        <div class="text-[9px]">Get it on <br><span class="text-sm font-bold">Google Play</span></div>
+                    </div>
+            </div>
+        
+        
+
+            <ul class="text-[13px] font-bold space-y-4">
+                <li><a href="#">¿Quiénes somos?</a></li>
+                <li><a href="#">Información de contacto</a></li>
+                <li><a href="#">¿Tienes un restaurante?</a></li>
+                <li><a href="#">Preguntas frecuentes</a></li>
+                <li><a href="#">Trabaja con nosotros</a></li>
+                <li><a href="#">Colaboración Guía MICHELIN</a></li>
+                <li><a href="#">Tarjeta Regalo TheFork</a></li>
+            </ul>
+
+            <ul class="text-[13px] font-bold space-y-4">
+                <li><a href="#">Programa Yums</a></li>
+                <li><a href="#">Condiciones de uso</a></li>
+                <li><a href="#">Declaración de Privacidad y Cookies</a></li>
+                <li><a href="#">Aceptación de cookies</a></li>
+                <li><a href="#">Blog</a></li>
+                <li><a href="#">Restaurante cerca de mí</a></li>
+            </ul>
+
+            <div class="flex flex-col gap-6">
+                <div class="flex gap-4">
+                    <a href="#">
+                        <img src="{{ asset('media/instagram_logo.png') }}" alt="Instagram" class="w-6 h-6">
+                    </a>
+                    
+                    <a href="#">
+                        <img src="{{ asset('media/facebook_logo.png') }}" alt="Facebook" class="w-6 h-6">
+                    </a>
+                </div>
+                <p class="text-[11px] font-bold leading-tight">
+                    © 2026 LA FOURCHETTESAS - <br>
+                    TODOS LOS DERECHOS RESERVADOS
+                </p>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-zinc-800">
+            <p class="text-[10px] text-gray-400 text-center leading-relaxed">
+                Las ofertas promocionales están sujetas a las condiciones que figuran en la página del restaurante. Las ofertas en bebidas alcohólicas están dirigidas únicamente a adultos. El consumo excesivo de alcohol es perjudicial para la salud. Bebe con moderación.
+            </p>
+        </div>
+    </footer>
 
     <script>
         // --- CONFIGURACIÓN INICIAL ---
@@ -167,7 +240,7 @@
 
         // --- 1. GESTIÓN DE APERTURA DE MENÚS ---
         function toggleDropdown(id) {
-            const ids = ['date', 'time', 'pax'];
+            const ids = ['date', 'time', 'pax', 'price']; // Todos los IDs de dropdowns
             const target = document.getElementById(`drop-${id}`);
             const isHidden = target.classList.contains('hidden');
 
@@ -183,7 +256,7 @@
         // Cierra los menús si haces clic fuera
         window.onclick = function(event) {
             if (!event.target.closest('.dropdown-container')) {
-                ['date', 'time', 'pax'].forEach(id => {
+                ['date', 'time', 'pax', 'price'].forEach(id => {
                     document.getElementById(`drop-${id}`).classList.add('hidden');
                 });
             }
@@ -296,11 +369,30 @@
             toggleDropdown(type);
         }
 
+        // --- 5. LÓGICA DE PRECIOS ---
+        function renderPrices() {
+            const container = document.getElementById('price-grid');
+            let html = '';
+            // Definimos rangos de precio (puedes personalizarlos)
+            const prices = [
+                "Menos de 20€", "20€ - 30€", "30€ - 40€", 
+                "40€ - 50€", "50€ - 70€", "Más de 70€"
+            ];
+
+            prices.forEach(price => {
+                html += `
+                    <button onclick="selectItem('price', '${price}')" class="text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-teal-50 hover:text-[#006252] rounded-lg transition w-full">
+                        ${price}
+                    </button>`;
+            });
+            container.innerHTML = html;
+        }
         // INICIALIZAR TODO AL CARGAR
         document.addEventListener('DOMContentLoaded', () => {
             renderCalendar();
             renderTimes();
             renderPax();
+            renderPrices();
         });
     </script>
 </body>

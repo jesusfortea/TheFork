@@ -11,6 +11,6 @@ Route::get('/', function () {
 Route::controller(RestauranteController::class)->group(function(){
 
     Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
+    Route::get('/restaurantes', 'show')->name('show.restaurante');
 
 });
-

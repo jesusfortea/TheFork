@@ -15,4 +15,8 @@ class RestauranteController extends Controller
         return view('restaurante.create', ['etiquetas' => $etiquetas]);
     }
 
+    public function show(){
+
+        return view('components.restaurant');
+    }
 }
