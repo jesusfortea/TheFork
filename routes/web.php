@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\RestauranteController;
 use Illuminate\Support\Facades\Route;
 
