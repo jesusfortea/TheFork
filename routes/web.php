@@ -14,6 +14,13 @@ Route::controller(RestauranteController::class)->group(function(){
 
 });
 
+
+Route::controller(RestauranteController::class)->group(function(){
+
+    Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
+
+});
+
 // Vista del formulario
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 // Procesar el login
