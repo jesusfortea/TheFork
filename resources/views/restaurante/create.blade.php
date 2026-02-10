@@ -27,9 +27,17 @@
         </div>
 
         {{-- Formulario para crear un restaurante --}}
-        <form class="bg-[#00665a] p-5 rounded" action="" method="post">
+        <form class="bg-[#00665a] p-5 rounded" action="{{ route('enviar.solicitud') }}" method="post">
+
+            @csrf
 
             <h1 class="mb-5 mt-5 text-3xl w-full text-white">Registrar mi restaurante</h1>
+
+            @error('message')
+
+                <p>{{ $message }}</p>
+                
+            @enderror
 
             <div class=" h-60 border-2 rounded content-center text-center">
                 <input class="text-white" type="file" name="img" id="img">
@@ -48,8 +56,18 @@
             <br><br>
 
             <label for="tipo" class="text-white">Tipo de cocina</label><br>
-            <input class="w-full bg-[#00665a] text-white border-2 rounded p-2" type="text" name="tipo" id="tipo" placeholder="Escribe algo...">
+            <select class="w-full bg-[#00665a] text-white border-2 rounded p-2" name="tipo" id="tipo">
 
+                <option value="" disabled selected>- Selecciona un tipo -</option>
+
+                @foreach($tipos as $tipo)
+
+                    <option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+
+                @endforeach
+
+            </select>
+            
             <br><br>
 
             <label for="etiqueta" class="text-white">Etiquetas Insignia</label><br>
@@ -57,7 +75,7 @@
                 @foreach ($etiquetas as $etiqueta)
                     @if ($etiqueta->tipo == "Insignia")
                         <label class="block mb-2">
-                            <input type="checkbox" name="etiqueta[]" value="{{ $etiqueta->id }}" class="mr-2">
+                            <input type="checkbox" name="etiqueta_insignia[]" value="{{ $etiqueta->id }}" class="mr-2">
                             <span class="text-white">{{ $etiqueta->nombre }}</span>
                         </label>
                     @endif
