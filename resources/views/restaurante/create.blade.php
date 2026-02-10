@@ -29,7 +29,7 @@
         {{-- Formulario para crear un restaurante --}}
         <form class="bg-[#00665a] p-5 rounded" action="" method="post">
 
-            <h1 class="m-10 text-3xl w-full text-white">Registrar mi restaurante</h1>
+            <h1 class="mb-5 mt-5 text-3xl w-full text-white">Registrar mi restaurante</h1>
 
             <div class=" h-60 border-2 rounded content-center text-center">
                 <input class="text-white" type="file" name="img" id="img">

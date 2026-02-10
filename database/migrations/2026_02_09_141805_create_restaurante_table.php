@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('precio');
             $table->text('tipo');
             $table->text('cheff');
+            $table->text('menu');
 
             $table->timestamps();
         });
