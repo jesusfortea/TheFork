@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Etiqueta;
+use App\Models\Tipo;
 use Illuminate\Http\Request;
 
 class RestauranteController extends Controller
@@ -17,6 +18,8 @@ class RestauranteController extends Controller
 
     public function show(){
 
-        return view('components.restaurant');
+        $tipos = Tipo::all();
+
+        return view('components.restaurant', ['tipos' => $tipos]);
     }
 }
