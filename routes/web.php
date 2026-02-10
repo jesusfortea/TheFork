@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RestauranteController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -7,6 +8,9 @@ Route::get('/', function () {
 });
 
 
-Route::get('/2', function () {
-    return view('mainpage');
+Route::controller(RestauranteController::class)->group(function(){
+
+    Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
+
 });
+
