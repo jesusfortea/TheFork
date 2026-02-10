@@ -64,7 +64,7 @@
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
                     </button>
 
-                    <div id="drop-date" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-6 w-340px z-300">
+                    <div id="drop-date" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-6 w-[340px] z-[300]">
                         <div class="flex justify-between items-center mb-6">
                             <button onclick="changeMonth(-1)" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full text-gray-500">❮</button>
                             <h4 id="month-name" class="font-bold text-[16px] text-gray-800 capitalize select-none">Febrero 2026</h4>
@@ -86,7 +86,7 @@
                         <span id="label-time">Hora</span>
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
                     </button>
-                    <div id="drop-time" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-200px z-300 max-h-320px overflow-y-auto no-scrollbar">
+                    <div id="drop-time" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-[100px] z-[300] max-h-320px overflow-y-auto h-64">
                         <div id="time-grid" class="flex flex-col gap-1">
                             </div>
                     </div>
@@ -98,7 +98,7 @@
                         <span id="label-pax">Pers.</span>
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
                     </button>
-                    <div id="drop-pax" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-160px z-300 max-h-320px overflow-y-auto">
+                    <div id="drop-pax" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-[140px] z-[300] max-h-320px overflow-y-auto h-64">
                         <div id="pax-grid" class="flex flex-col gap-1">
                             </div>
                     </div>
@@ -126,11 +126,30 @@
                     Mejores valorados
                 </button>
 
-                <button class="border border-gray-300 rounded-full px-4 py-2 text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:border-gray-800 transition bg-white">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
-                    Tipo de cocina
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
-                </button>
+                <div class="relative dropdown-container">
+                    <button onclick="toggleDropdown('tipo')" class="border border-gray-300 rounded-full px-4 py-2 text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:border-gray-800 transition bg-white">
+                        <svg class="text-gray-400 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                        <span id="label-tipo">Tipo de cocina</span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
+                    </button>
+                    
+                    <div id="drop-tipo" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 h-64 rounded-xl shadow-2xl p-2 w-220px z-300 overflow-y-auto">
+                        <div class="flex flex-col gap-1">
+                            <button onclick="selectItem('tipo', 'Tipo de cocina')" class="text-left px-4 py-2 text-sm font-medium text-gray-400 hover:bg-gray-50 rounded-lg transition w-full">
+                                Cualquier cocina
+                            </button>
+                            
+                            @foreach($tipos as $tipo)
+                                <button onclick="selectItem('tipo', '{{ $tipo->nombre }}')" class="text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-teal-50 hover:text-[#006252] rounded-lg transition w-full">
+                                    {{ $tipo->nombre }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
 
                 <div class="relative dropdown-container">
                     <button onclick="toggleDropdown('price')" class="border border-gray-300 rounded-full px-4 py-2 text-[12px] font-bold text-gray-700 flex items-center gap-2 whitespace-nowrap hover:border-gray-800 transition bg-white">
@@ -143,7 +162,7 @@
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
                     </button>
                     
-                    <div id="drop-price" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-200px z-300 max-h-320px overflow-y-auto no-scrollbar">
+                    <div id="drop-price" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-[150px] z-[300] h-64 overflow-y-auto">
                         <div id="price-grid" class="flex flex-col gap-1">
                             </div>
                     </div>
@@ -240,7 +259,7 @@
 
         // --- 1. GESTIÓN DE APERTURA DE MENÚS ---
         function toggleDropdown(id) {
-            const ids = ['date', 'time', 'pax', 'price']; // Todos los IDs de dropdowns
+            const ids = ['date', 'time', 'pax', 'price', 'tipo']; // Todos los IDs de dropdowns
             const target = document.getElementById(`drop-${id}`);
             const isHidden = target.classList.contains('hidden');
 
@@ -256,7 +275,7 @@
         // Cierra los menús si haces clic fuera
         window.onclick = function(event) {
             if (!event.target.closest('.dropdown-container')) {
-                ['date', 'time', 'pax', 'price'].forEach(id => {
+                ['date', 'time', 'pax', 'price', 'tipo'].forEach(id => {
                     document.getElementById(`drop-${id}`).classList.add('hidden');
                 });
             }
