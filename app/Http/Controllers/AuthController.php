@@ -55,8 +55,20 @@ class AuthController extends Controller
         // Autenticar automáticamente al usuario
         Auth::login($user);
 
-        // Redirigir al home
-        return redirect()->route('home')->with('success', '¡Cuenta creada exitosamente! Bienvenido a TheFork.');
+        $redirectUrl = route('home');
+        $successMessage = '¡Cuenta creada exitosamente! Bienvenido a TheFork.';
+
+        // Si la petición es AJAX, devolver JSON
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage,
+                'redirect' => $redirectUrl
+            ], 201);
+        }
+
+        // Si no es AJAX, redirigir normalmente
+        return redirect()->route('home')->with('success', $successMessage);
     }
 
 }
