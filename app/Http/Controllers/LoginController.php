@@ -10,6 +10,7 @@ class LoginController extends Controller
         return view('auth.login');
     }
 
+
     public function login(Request $request) {
         // 1. Validaciones de Backend 
         $credentials = $request->validate([
