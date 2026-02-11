@@ -22,11 +22,16 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Redirección según el rol [cite: 26, 29]
-            if (Auth::user()->role === 'admin') {
+            // Obtener el usuario autenticado
+            $user = Auth::user();
+
+            // Redirección según el rol del usuario
+            if ($user->rol && $user->rol->nombre === 'Administrador') {
                 return redirect()->intended('/admin/dashboard');
             }
-            return redirect()->intended('/guia');
+
+            // Usuario normal (Cliente)
+            return redirect()->intended(route('home'));
         }
 
         // Si falla, volver con error
