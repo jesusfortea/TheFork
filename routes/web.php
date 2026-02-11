@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Route;
 Route::controller(RestauranteController::class)->group(function(){
 
     Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
-    Route::get('/', 'show')->name('show.restaurante');
+    Route::get('/restaurantes', 'show')->name('show.restaurante');
     Route::post('/solicitud-restaurante', 'solicitud')->name('enviar.solicitud');
+    Route::get('/', 'home')->name('home');
 
 });
 
