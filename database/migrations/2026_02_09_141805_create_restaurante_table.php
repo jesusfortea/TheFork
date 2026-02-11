@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('precio');
             $table->text('cheff');
             $table->text('menu');
+            $table->boolean('estado');
 
             // -- Id tipo de cocina -- //
             $table->unsignedBigInteger('id_tipo');
