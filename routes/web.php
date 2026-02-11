@@ -27,4 +27,11 @@ Route::controller(LoginController::class)->group(function(){
 // Rutas de autenticación con AuthController
 Route::controller(AuthController::class)->group(function(){
     Route::get('/register', 'showRegisterForm')->name('register');
+    Route::post('/register', 'register')->name('register.post');
 });
+
+// Ruta protegida - Dashboard 
+// middleware actua como un filtro que verifica si el usuario esta logueado
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware('auth')->name('dashboard');

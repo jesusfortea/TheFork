@@ -22,16 +22,44 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Redirección según el rol [cite: 26, 29]
-            if (Auth::user()->role === 'admin') {
-                return redirect()->intended('/admin/dashboard');
+            // Obtener el usuario autenticado
+            $user = Auth::user();
+
+            // Determinar la URL de redirección según el rol del usuario
+            if ($user->rol && $user->rol->nombre === 'Administrador') {
+                $redirectUrl = '/admin/dashboard';
+            } else {
+                // Usuario normal (Cliente)
+                $redirectUrl = route('home');
             }
-            return redirect()->intended('/guia');
+
+            // Si la petición es AJAX, devolver JSON
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => '¡Bienvenido! Has iniciado sesión correctamente',
+                    'redirect' => $redirectUrl
+                ], 200);
+            }
+
+            // Si no es AJAX, redirigir normalmente
+            return redirect()->intended($redirectUrl);
         }
 
-        // Si falla, volver con error
+        // Si falla, preparar mensaje de error
+        $errorMessage = 'Las credenciales no coinciden con nuestros registros.';
+
+        // Si la petición es AJAX, devolver JSON con error
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $errorMessage
+            ], 401);
+        }
+
+        // Si no es AJAX, volver con errores
         return back()->withErrors([
-            'email' => 'Las credenciales no coinciden con nuestros registros.',
+            'email' => $errorMessage,
         ])->onlyInput('email');
     }
 
