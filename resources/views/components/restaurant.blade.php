@@ -29,7 +29,7 @@
 
         <nav class="flex items-center justify-between px-10 py-4 gap-8">
 
-            <a href="">
+            <a href="{{ route('home') }}">
                 <img src="{{ asset('media/logo.png') }}" alt="Logo" class="h-9">
             </a>
 
