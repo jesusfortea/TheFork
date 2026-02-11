@@ -30,13 +30,14 @@ class RestauranteController extends Controller
     public function solicitud(CrearRestauranteRequest $request){
 
         $restaurante = new Restaurante();
-        $restaurante->img = $request->img;
         $restaurante->titulo = $request->titulo;
-        $restaurante->desc = $request->desc;
-        $restaurante->tipo = $request->tipo;
-        $restaurante->ubi = $request->ubi;
-        $restaurante->cheff = $request->cheff;
+        $restaurante->descripcion = $request->desc;
+        $restaurante->imagen = $request->img;
+        $restaurante->ubicacion = $request->ubi;
         $restaurante->precio = $request->precio;
+        $restaurante->cheff = $request->cheff;
+        $restaurante->menu = $request->menu;
+        $restaurante->tipo = $request->tipo;
 
         $restaurante->save();
 

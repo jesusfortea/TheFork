@@ -123,7 +123,7 @@
             <br>
 
             
-            <input class=" p-3 bg-[#00665a] border-2 cursor-pointer text-white rounded" type="submit" name="crear" id="crear" value="Enviar solicitud">
+            <input class="p-3 bg-[#00665a] border-2 cursor-pointer text-white rounded" type="submit" name="crear" id="crear" value="Enviar solicitud">
 
         </form>
 
