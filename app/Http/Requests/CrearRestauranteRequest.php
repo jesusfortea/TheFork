@@ -24,23 +24,30 @@ class CrearRestauranteRequest extends FormRequest
         return [
             'titulo' => ['required', 'min:3'],
             'desc' => ['required'],
-            'tipo' => ['required'],
-            'etiqueta_insignia' => ['required'],
-            'etiqueta' => ['required'],
+            'tipo' => ['required', 'integer'],
             'ubi' => ['required'],
             'cheff' => ['required'],
-            'precio' => ['required'],
+            'precio' => ['required', 'numeric', 'min:0'],
             'menu' => ['required'],
+            'img' => ['required', 'max:2048']
         ];
     }
 
-    public function message(): array
+    public function messages(): array
     {
         return[
             'titulo.required' => 'No puedes dejar el campo título vacío.',
             'titulo.min' => 'El título debe de ser superior a 3 carácteres.',
             'desc.required' => 'No puedes dejar el campo descripción vacío.',
-            'tipo.required' => 'No puedes dejar el tipo vacío.'
+            'tipo.required' => 'No puedes dejar el campo tipo vacío.',
+            'ubi.required' => 'No puedes dejar el campo ubicación vací0.',
+            'cheff.required' => 'No puedes dejar el campo cheff vacío.',
+            'precio.required' => 'No puedes dejar el campo precio vacío.',
+            'menu.required' => 'No puedes dejar el campo menú vacío.',
+            'tipo.integer' => 'El campo tipo tiene que ser numérico.',
+            'precio.numeric' => 'El campo precio tiene que ser numérico.',
+            'img.required' => 'No puedes dejar el campo imagen vacío.',
+            'img.image' => 'El campo imagen tiene que ser una imagen.'
         ];
     }
 
