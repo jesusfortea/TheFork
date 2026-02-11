@@ -16,7 +16,19 @@
             </div>
 
             {{-- Formulario de registro --}}
-            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="" method="post">
+            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="{{ route('register.post') }}" method="POST">
+                @csrf
+
+                {{-- Mostrar errores generales --}}
+                @if ($errors->any())
+                    <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li class="text-sm">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 {{-- Nombre completo --}}
                 <div class="mb-6">
@@ -24,13 +36,17 @@
                         Nombre Completo
                     </label>
                     <input 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition @error('name') border-red-500 @enderror" 
                         type="text" 
                         name="name" 
                         id="name" 
                         placeholder="Juan Pérez"
+                        value="{{ old('name') }}"
                         required
                     >
+                    @error('name')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Email --}}
@@ -39,13 +55,17 @@
                         Correo Electrónico
                     </label>
                     <input 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition @error('email') border-red-500 @enderror" 
                         type="email" 
                         name="email" 
                         id="email" 
                         placeholder="tu@email.com"
+                        value="{{ old('email') }}"
                         required
                     >
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Contraseña --}}
@@ -54,7 +74,7 @@
                         Contraseña
                     </label>
                     <input 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition @error('password') border-red-500 @enderror" 
                         type="password" 
                         name="password" 
                         id="password" 
@@ -62,6 +82,9 @@
                         required
                     >
                     <p class="text-xs text-gray-500 mt-1">Mínimo 8 caracteres</p>
+                    @error('password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Confirmar contraseña --}}
