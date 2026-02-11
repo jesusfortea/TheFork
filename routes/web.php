@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RestauranteController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,9 +18,12 @@ Route::controller(RestauranteController::class)->group(function(){
 
 });
 
-// Vista del formulario
+// Rutas de autenticación con LoginController
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-// Procesar el login
 Route::post('/login', [LoginController::class, 'login']);
-// Cerrar sesión
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// Rutas de autenticación con AuthController
+Route::controller(AuthController::class)->group(function(){
+    Route::get('/register', 'showRegisterForm')->name('register');
+});
