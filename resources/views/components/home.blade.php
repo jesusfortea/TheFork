@@ -30,9 +30,11 @@
                         </button>
                     </li>
                     <li>
-                        <button class="px-4 py-2 bg-teal-900 text-white rounded font-bold text-[12px]">
-                            INICIAR SESIÓN
-                        </button>
+                        <a href="{{ route('login') }}">
+                            <button class="px-4 py-2 bg-teal-900 text-white rounded font-bold text-[12px]">
+                                INICIAR SESIÓN
+                            </button>
+                        </a>
                     </li>
                 </section>
             </ul>
