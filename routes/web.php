@@ -25,5 +25,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // Rutas de autenticación con AuthController
 Route::controller(AuthController::class)->group(function(){
+    Route::get('/login', 'showLoginForm')->name('login');
     Route::get('/register', 'showRegisterForm')->name('register');
 });
