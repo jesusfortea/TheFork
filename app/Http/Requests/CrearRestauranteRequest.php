@@ -29,6 +29,8 @@ class CrearRestauranteRequest extends FormRequest
             'etiqueta' => ['required'],
             'ubi' => ['required'],
             'cheff' => ['required'],
+            'precio' => ['required'],
+            'menu' => ['required'],
         ];
     }
 

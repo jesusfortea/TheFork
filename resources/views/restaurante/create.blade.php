@@ -33,11 +33,15 @@
 
             <h1 class="mb-5 mt-5 text-3xl w-full text-white">Registrar mi restaurante</h1>
 
-            @error('message')
-
-                <p>{{ $message }}</p>
-                
-            @enderror
+            @if ($errors->any())
+                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li class="text-sm">{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <div class=" h-60 border-2 rounded content-center text-center">
                 <input class="text-white" type="file" name="img" id="img" value="{{ old('img') }}">
