@@ -29,30 +29,26 @@ class RestauranteController extends Controller
 
     public function solicitud(CrearRestauranteRequest $request){
 
+        // GUARDAR LA IMAGEN PRIMERO
+        $rutaImagen = null;
+        if ($request->hasFile('img')) {
+            $imagen = $request->file('img');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            $imagen->move(public_path('media'), $nombreImagen);
+            $rutaImagen = 'media/' . $nombreImagen;
+        }
+
         $restaurante = new Restaurante();
         $restaurante->titulo = $request->titulo;
         $restaurante->descripcion = $request->desc;
-
-        // GUARDAR LA IMAGEN EN public/media
-        if ($request->hasFile('img')) {
-            $imagen = $request->file('img');
-            
-            // Generar un nombre único para evitar colisiones
-            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
-            
-            // Mover la imagen a public/media
-            $imagen->move(public_path('media'), $nombreImagen);
-            
-            // Guardar la ruta en la BBDD
-            $restaurante->imagen = 'media/' . $nombreImagen;
-        }
-
+        $restaurante->imagen = $rutaImagen;
         $restaurante->ubicacion = $request->ubi;
         $restaurante->precio = $request->precio;
         $restaurante->cheff = $request->cheff;
         $restaurante->menu = $request->menu;
         $restaurante->id_tipo = $request->tipo;
-
+        $restaurante->estado = false;
+        
         $restaurante->save();
         
         return redirect()->route('home');
