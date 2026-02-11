@@ -32,20 +32,37 @@ class RestauranteController extends Controller
         $restaurante = new Restaurante();
         $restaurante->titulo = $request->titulo;
         $restaurante->descripcion = $request->desc;
-        $restaurante->imagen = $request->img;
+
+        // GUARDAR LA IMAGEN EN public/media
+        if ($request->hasFile('img')) {
+            $imagen = $request->file('img');
+            
+            // Generar un nombre único para evitar colisiones
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            
+            // Mover la imagen a public/media
+            $imagen->move(public_path('media'), $nombreImagen);
+            
+            // Guardar la ruta en la BBDD
+            $restaurante->imagen = 'media/' . $nombreImagen;
+        }
+
         $restaurante->ubicacion = $request->ubi;
         $restaurante->precio = $request->precio;
         $restaurante->cheff = $request->cheff;
         $restaurante->menu = $request->menu;
-        $restaurante->tipo = $request->tipo;
+        $restaurante->id_tipo = $request->tipo;
 
         $restaurante->save();
+        
+        return redirect()->route('home');
 
     }
 
     public function home(){
 
-        return view('index');
+        $restaurante = Restaurante::all();
+        return view('index', ['restaurantes' => $restaurante]);
 
     }
 }
