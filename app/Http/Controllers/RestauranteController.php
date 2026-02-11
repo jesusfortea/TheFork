@@ -29,23 +29,36 @@ class RestauranteController extends Controller
 
     public function solicitud(CrearRestauranteRequest $request){
 
+        // GUARDAR LA IMAGEN PRIMERO
+        $rutaImagen = null;
+        if ($request->hasFile('img')) {
+            $imagen = $request->file('img');
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            $imagen->move(public_path('media'), $nombreImagen);
+            $rutaImagen = 'media/' . $nombreImagen;
+        }
+
         $restaurante = new Restaurante();
         $restaurante->titulo = $request->titulo;
         $restaurante->descripcion = $request->desc;
-        $restaurante->imagen = $request->img;
+        $restaurante->imagen = $rutaImagen;
         $restaurante->ubicacion = $request->ubi;
         $restaurante->precio = $request->precio;
         $restaurante->cheff = $request->cheff;
         $restaurante->menu = $request->menu;
-        $restaurante->tipo = $request->tipo;
-
+        $restaurante->id_tipo = $request->tipo;
+        $restaurante->estado = false;
+        
         $restaurante->save();
+        
+        return redirect()->route('home');
 
     }
 
     public function home(){
 
-        return view('index');
+        $restaurante = Restaurante::all();
+        return view('index', ['restaurantes' => $restaurante]);
 
     }
 }
