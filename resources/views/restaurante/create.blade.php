@@ -110,7 +110,7 @@
             <br>
 
             <label for="precio" class="text-white">Precio</label>
-            <input type="text" class="w-full bg-[#00665a] text-white border-2 rounded p-2" value="{{ old('precio') }}" name="precio" id="precio" placeholder="Escribe algo...">>
+            <input type="text" class="w-full bg-[#00665a] text-white border-2 rounded p-2" value="{{ old('precio') }}" name="precio" id="precio" placeholder="Escribe algo...">
 
             <br>
             <br>
