@@ -56,3 +56,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
     Route::delete('/roles/{rol}', [AdminController::class, 'roldestroy'])->name('roles.destroy');
 });
 
+
+
+Route::view('/mail', 'mail.reservaMail');
+
