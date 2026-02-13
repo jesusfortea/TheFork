@@ -67,7 +67,7 @@ class AdminController extends Controller
     }
     
     /**
-     * Eliminar un usuario
+     * Eliminar un usuario (soporta AJAX y tradicional)
      */
     public function eliminarUsuario($id)
     {
@@ -78,12 +78,36 @@ class AdminController extends Controller
             
             // No permitir que el admin se elimine a sí mismo
             if ($usuario->id === auth()->id()) {
+                // Si es AJAX, devolver JSON
+                if (request()->wantsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No puedes eliminarte a ti mismo'
+                    ], 403);
+                }
                 return redirect()->route('admin.usuarios')->with('error', 'No puedes eliminarte a ti mismo');
             }
             
             $usuario->delete();
+            
+            // Si es AJAX, devolver JSON
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Usuario eliminado correctamente'
+                ]);
+            }
+            
+            // Si es tradicional, redirect
             return redirect()->route('admin.usuarios')->with('success', 'Usuario eliminado correctamente');
         } catch (\Exception $e) {
+            // Si es AJAX
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar el usuario'
+                ], 500);
+            }
             return redirect()->route('admin.usuarios')->with('error', 'Error al eliminar el usuario');
         }
     }
@@ -155,8 +179,9 @@ class AdminController extends Controller
         return view('admin.reservas', compact('reservas'));
     }
     
+    
     /**
-     * Eliminar una reserva
+     * Eliminar una reserva (soporta AJAX y tradicional)
      */
     public function eliminarReserva($id)
     {
@@ -166,8 +191,23 @@ class AdminController extends Controller
             $reserva = Reserva::findOrFail($id);
             $reserva->delete();
             
+            // Si es AJAX, devolver JSON
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Reserva eliminada correctamente'
+                ]);
+            }
+            
             return redirect()->route('admin.reservas')->with('success', 'Reserva eliminada correctamente');
         } catch (\Exception $e) {
+            // Si es AJAX
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar la reserva'
+                ], 500);
+            }
             return redirect()->route('admin.reservas')->with('error', 'Error al eliminar la reserva');
         }
     }

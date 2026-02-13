@@ -3,34 +3,13 @@
 @section('title', 'TheFork | Gestión de Reservas')
 @section('contenido')
 
+{{-- Meta tag para CSRF (necesario para AJAX) --}}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+{{-- SweetAlert2 CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <div class="min-h-screen bg-gradient-to-br from-teal-50 to-white">
-    
-    {{-- Navbar superior para Admin --}}
-    <nav class="bg-white shadow-md border-b-2 border-teal-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <h1 class="text-2xl font-bold text-teal-900">TheFork</h1>
-                    <span class="text-xs bg-teal-900 text-white px-2 py-1 rounded font-semibold">ADMIN</span>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700 text-sm">Hola, <strong class="text-teal-900">{{ Auth::user()->name }}</strong></span>
-                    
-                    <a href="{{ route('admin.dashboard') }}" class="text-teal-900 hover:text-teal-700 transition text-sm font-semibold">
-                        ← Volver al Dashboard
-                    </a>
-                    
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-teal-900 hover:bg-teal-800 text-white font-bold py-2 px-4 rounded-lg transition shadow-md hover:shadow-lg">
-                            Cerrar Sesión
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     {{-- Contenido principal --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -83,7 +62,8 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse($reservas as $reserva)
-                            <tr class="hover:bg-gray-50 transition">
+                            {{-- ID único para AJAX --}}
+                            <tr id="fila-reserva-{{ $reserva->id }}" class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                     #{{ $reserva->id }}
                                 </td>
@@ -119,18 +99,12 @@
                                             ✏️ Editar
                                         </a>
                                         
-                                        {{-- Botón Eliminar --}}
-                                        <form action="{{ route('admin.reservas.eliminar', $reserva->id) }}" 
-                                              method="POST" 
-                                              class="inline"
-                                              onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta reserva?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" 
-                                                    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition shadow-md hover:shadow-lg text-xs font-semibold">
-                                                🗑️ Eliminar
-                                            </button>
-                                        </form>
+                                        {{-- Botón Eliminar con AJAX --}}
+                                        <button 
+                                            onclick="eliminarReservaAjax({{ $reserva->id }})"
+                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition shadow-md hover:shadow-lg text-xs font-semibold">
+                                            🗑️ Eliminar
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -149,5 +123,8 @@
     </div>
 
 </div>
+
+{{-- Script AJAX para operaciones sin recargar página --}}
+<script src="{{ asset('js/crud_ajax.js') }}"></script>
 
 @endsection
