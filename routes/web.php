@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RestauranteController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -35,3 +36,18 @@ Route::controller(AuthController::class)->group(function(){
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware('auth')->name('dashboard');
+
+// Ruta protegida - Dashboard de Administrador
+// Solo accesible para usuarios con rol "Administrador"
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+    ->middleware('auth')
+    ->name('admin.dashboard');
+
+// Rutas de gestión del admin
+Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
+    Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
+    Route::get('/restaurantes', [AdminController::class, 'restaurantes'])->name('restaurantes');
+    Route::get('/reservas', [AdminController::class, 'reservas'])->name('reservas');
+    Route::get('/roles', [AdminController::class, 'roles'])->name('roles');
+});
+
