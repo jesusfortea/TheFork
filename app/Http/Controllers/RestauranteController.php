@@ -22,8 +22,9 @@ class RestauranteController extends Controller
     public function show(){
 
         $tipos = Tipo::all();
+        $restaurantes = Restaurante::all();
 
-        return view('components.restaurant', ['tipos' => $tipos]);
+        return view('mainpage', ['tipos' => $tipos, 'restaurantes' => $restaurantes]);
     }
 
 

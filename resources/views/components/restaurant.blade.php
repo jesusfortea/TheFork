@@ -14,7 +14,7 @@
 </head>
 <body class="bg-white text-gray-800">
 
-    <header class="w-full bg-white border-b sticky top-0 z-100 shadow-sm">
+    <header class="w-full bg-white border-b sticky top-0 z-100000 shadow-sm">
         
         <nav class="border-b border-gray-100">
             <ul class="flex justify-end gap-4 px-10 py-2 text-[11px] font-bold text-teal-900 uppercase">
