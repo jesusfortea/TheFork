@@ -46,8 +46,17 @@ Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
 // Rutas de gestión del admin
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
     Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
+    Route::get('/usuarios/{id}/editar', [AdminController::class, 'editarUsuario'])->name('usuarios.editar');
+    Route::put('/usuarios/{id}', [AdminController::class, 'actualizarUsuario'])->name('usuarios.actualizar');
+    Route::delete('/usuarios/{id}', [AdminController::class, 'eliminarUsuario'])->name('usuarios.eliminar');
+    
     Route::get('/restaurantes', [AdminController::class, 'restaurantes'])->name('restaurantes');
+    
     Route::get('/reservas', [AdminController::class, 'reservas'])->name('reservas');
+    Route::get('/reservas/{id}/editar', [AdminController::class, 'editarReserva'])->name('reservas.editar');
+    Route::put('/reservas/{id}', [AdminController::class, 'actualizarReserva'])->name('reservas.actualizar');
+    Route::delete('/reservas/{id}', [AdminController::class, 'eliminarReserva'])->name('reservas.eliminar');
+    
     Route::get('/roles', [AdminController::class, 'roles'])->name('roles');
 });
 

@@ -14,14 +14,73 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buscar el rol de Administrador (debe existir en la tabla rols)
+        // Buscar los roles
         $rolAdmin = \App\Models\Rol::where('nombre', 'Administrador')->first();
+        $rolCliente = \App\Models\Rol::where('nombre', 'Cliente')->first();
 
-        $user = new User();
-        $user->name = 'Administrador';
-        $user->email = 'admin@gmail.com';
-        $user->password = Hash::make('qweQWE123');
-        $user->rol_id = $rolAdmin->id; // Asignar el ID del rol
-        $user->save();
+        // Administrador
+        User::create([
+            'name' => 'Administrador',
+            'email' => 'admin@gmail.com',
+            'password' => Hash::make('qweQWE123'),
+            'rol_id' => $rolAdmin->id,
+        ]);
+
+        // Clientes de prueba
+        User::create([
+            'name' => 'Juan Pérez García',
+            'email' => 'juan.perez@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'María López Martínez',
+            'email' => 'maria.lopez@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Carlos Rodríguez Sánchez',
+            'email' => 'carlos.rodriguez@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Ana Fernández Ruiz',
+            'email' => 'ana.fernandez@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Pedro Martín González',
+            'email' => 'pedro.martin@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Laura García Díaz',
+            'email' => 'laura.garcia@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'David Sánchez Torres',
+            'email' => 'david.sanchez@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
+
+        User::create([
+            'name' => 'Carmen Gómez Navarro',
+            'email' => 'carmen.gomez@gmail.com',
+            'password' => Hash::make('password123'),
+            'rol_id' => $rolCliente->id,
+        ]);
     }
 }
