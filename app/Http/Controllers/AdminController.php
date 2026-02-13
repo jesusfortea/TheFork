@@ -84,41 +84,55 @@ class AdminController extends Controller
         return view('admin.reservas');
     }
 
-    /**
-     * Gestión de Roles y Permisos
-     */
     public function roles()
     {
         $this->verificarAdmin();
-
         $roles = Rol::all();
-
         return view('admin.roles', ['roles' => $roles]);
-    }
-
-
-    public function roldestroy(Rol $rol)
-    {
-        if ($rol->users()->exists()) {
-            return back()->with('error', 'No puedes eliminar un rol que tiene usuarios asignados.');
-        }
-
-        $rol->delete();
-
-        return back()->with('success', 'Rol eliminado correctamente.');
     }
 
     public function rolstore(Request $request)
     {
         $request->validate(['nombre' => 'required|string|max:255|unique:rols']);
-        Rol::create(['nombre' => $request->nombre]);
-        return back()->with('success', 'Rol creado correctamente.');
+
+        $rol = Rol::create(['nombre' => $request->nombre]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rol creado correctamente.',
+            'rol'     => $rol,
+        ]);
     }
 
     public function rolupdate(Request $request, Rol $rol)
     {
-        $request->validate(['nombre' => 'required|string|max:255|unique:rols,nombre,' . $rol->id]);
+        $request->validate([
+            'nombre' => 'required|string|max:255|unique:rols,nombre,' . $rol->id,
+        ]);
+
         $rol->update(['nombre' => $request->nombre]);
-        return back()->with('success', 'Rol actualizado correctamente.');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rol actualizado correctamente.',
+            'rol'     => $rol,
+        ]);
+    }
+
+    public function roldestroy(Rol $rol)
+    {
+        if ($rol->users()->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No puedes eliminar un rol que tiene usuarios asignados.',
+            ], 422);
+        }
+
+        $rol->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rol eliminado correctamente.',
+        ]);
     }
 }
