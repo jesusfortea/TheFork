@@ -13,6 +13,7 @@ Route::controller(RestauranteController::class)->group(function(){
     Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
     Route::get('/restaurantes', 'show')->name('show.restaurante');
     Route::post('/solicitud-restaurante', 'solicitud')->name('enviar.solicitud');
+    Route::delete('/restaurantes/{id}', 'destroy')->name('restaurantes.destroy');
     Route::get('/', 'home')->name('home');
 
 });
@@ -64,4 +65,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
     Route::delete('/roles/{rol}', [AdminController::class, 'roldestroy'])->name('roles.destroy');
 });
 
+
+
+Route::view('/mail', 'mail.reservaMail');
 

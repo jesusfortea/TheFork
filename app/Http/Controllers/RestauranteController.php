@@ -61,4 +61,25 @@ class RestauranteController extends Controller
         return view('index', ['restaurantes' => $restaurante]);
 
     }
+
+    /**
+     * Elimina un restaurante de la base de datos
+     * @param int $id - ID del restaurante a eliminar
+     */
+    public function destroy($id){
+        
+        // Buscar el restaurante por ID
+        $restaurante = Restaurante::findOrFail($id);
+        
+        // Eliminar la imagen del servidor si existe
+        if ($restaurante->imagen && file_exists(public_path($restaurante->imagen))) {
+            unlink(public_path($restaurante->imagen));
+        }
+        
+        // Eliminar el restaurante de la base de datos
+        $restaurante->delete();
+        
+        // Redirigir con mensaje de éxito
+        return redirect()->back()->with('success', 'Restaurante eliminado correctamente');
+    }
 }
