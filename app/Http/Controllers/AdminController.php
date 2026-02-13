@@ -196,12 +196,14 @@ class AdminController extends Controller
         $request->validate([
             'id_user' => 'required|exists:users,id',
             'id_restaurante' => 'required|exists:restaurantes,id',
+            'fecha_hora' => 'required|date',
         ]);
         
         try {
             $reserva = Reserva::findOrFail($id);
             $reserva->id_user = $request->id_user;
             $reserva->id_restaurante = $request->id_restaurante;
+            $reserva->fecha_hora = $request->fecha_hora;
             $reserva->save();
             
             return redirect()->route('admin.reservas')->with('success', 'Reserva actualizada correctamente');

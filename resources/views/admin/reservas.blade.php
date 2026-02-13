@@ -103,7 +103,13 @@
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    {{ $reserva->created_at->format('d/m/Y H:i') }}
+                                    @if($reserva->fecha_hora)
+                                        <div class="font-semibold text-teal-900">{{ \Carbon\Carbon::parse($reserva->fecha_hora)->format('d/m/Y H:i') }}</div>
+                                        <div class="text-xs text-gray-500">Fecha reserva</div>
+                                    @else
+                                        <div>{{ $reserva->created_at->format('d/m/Y H:i') }}</div>
+                                        <div class="text-xs text-gray-500">Fecha creación</div>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                     <div class="flex justify-center gap-2">

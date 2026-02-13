@@ -105,6 +105,23 @@
                     @enderror
                 </div>
 
+                {{-- Fecha y Hora de la Reserva --}}
+                <div class="mb-6">
+                    <label for="fecha_hora" class="block text-sm font-bold text-gray-700 mb-2">
+                        📅 Fecha y Hora de la Reserva
+                    </label>
+                    <input type="datetime-local" 
+                           id="fecha_hora" 
+                           name="fecha_hora" 
+                           value="{{ old('fecha_hora', $reserva->fecha_hora ? \Carbon\Carbon::parse($reserva->fecha_hora)->format('Y-m-d\TH:i') : '') }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-900 focus:border-transparent transition"
+                           required>
+                    @error('fecha_hora')
+                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                    <p class="text-gray-500 text-xs mt-2">* Selecciona la fecha y hora en la que el cliente desea reservar</p>
+                </div>
+
                 {{-- Botones de acción --}}
                 <div class="flex gap-4 pt-4">
                     <button type="submit" 

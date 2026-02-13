@@ -8,7 +8,7 @@ class Reserva extends Model
 {
     protected $table = 'reservas';
     
-    protected $fillable = ['id_user', 'id_restaurante'];
+    protected $fillable = ['id_user', 'id_restaurante', 'fecha_hora'];
     
     /**
      * Relación: Una reserva pertenece a un usuario
