@@ -16,7 +16,7 @@
             </div>
 
             {{-- Formulario de inicio de sesión --}}
-            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="{{ route('login.post') }}" method="POST">
+            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="{{ route('login.post') }}" method="POST" onsubmit="return procesarLogin(event)">
                 @csrf
 
                 {{-- Mostrar errores generales --}}
@@ -42,6 +42,7 @@
                         id="email" 
                         placeholder="tu@email.com"
                         value="{{ old('email') }}"
+                        onblur="validarCampoEmail()"
                         required
                     >
                     @error('email')
@@ -60,7 +61,7 @@
                         name="password" 
                         id="password" 
                         placeholder="••••••••"
-                        required
+                        onblur="validarCampoPassword()"
                     >
                     @error('password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -140,8 +141,12 @@
                 </p>
             </div>
 
-        </div>
-
     </div>
 
 @endsection
+
+{{-- Incluir SweetAlert2 desde CDN --}}
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/login.js') }}"></script>
+@endpush

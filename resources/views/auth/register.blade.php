@@ -16,7 +16,7 @@
             </div>
 
             {{-- Formulario de registro --}}
-            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="{{ route('register.post') }}" method="POST">
+            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="{{ route('register.post') }}" method="POST" onsubmit="return procesarRegistro(event)">
                 @csrf
 
                 {{-- Mostrar errores generales --}}
@@ -42,6 +42,7 @@
                         id="name" 
                         placeholder="Juan Pérez"
                         value="{{ old('name') }}"
+                        onblur="validarCampoNombre()"
                         required
                     >
                     @error('name')
@@ -61,6 +62,7 @@
                         id="email" 
                         placeholder="tu@email.com"
                         value="{{ old('email') }}"
+                        onblur="validarCampoEmailRegistro()"
                         required
                     >
                     @error('email')
@@ -79,6 +81,8 @@
                         name="password" 
                         id="password" 
                         placeholder="••••••••"
+                        onblur="validarCampoPasswordRegistro()"
+                        oninput="mostrarFortalezaPassword()"
                         required
                     >
                     <p class="text-xs text-gray-500 mt-1">Mínimo 8 caracteres</p>
@@ -98,6 +102,7 @@
                         name="password_confirmation" 
                         id="password_confirmation" 
                         placeholder="••••••••"
+                        onblur="validarCampoPasswordConfirm()"
                         required
                     >
                 </div>
@@ -166,8 +171,12 @@
 
             </form>
 
-        </div>
-
     </div>
 
 @endsection
+
+{{-- Incluir SweetAlert2 desde CDN --}}
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/register.js') }}"></script>
+@endpush

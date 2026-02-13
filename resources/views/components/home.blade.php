@@ -114,5 +114,8 @@
         </div>
     </footer>
 
+    {{-- Scripts de las vistas hijas --}}
+    @stack('scripts')
+
 </body>
 </html>
