@@ -21,7 +21,7 @@
         <nav class="flex justify-between items-center px-10 py-3">
             <ul class="flex items-center w-full">
                 <li>
-                    <a href=""><img src="{{ asset('media/logo.png') }}" alt="Logo" class="h-9"></a>
+                    <a href="{{ route('home') }}"><img src="{{ asset('media/logo.png') }}" alt="Logo" class="h-9"></a>
                 </li>
                 
                 <section class="flex ml-auto gap-3">
@@ -113,6 +113,9 @@
             </p>
         </div>
     </footer>
+
+    {{-- Scripts de las vistas hijas --}}
+    @stack('scripts')
 
 </body>
 </html>

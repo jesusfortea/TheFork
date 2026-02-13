@@ -16,7 +16,19 @@
             </div>
 
             {{-- Formulario de inicio de sesión --}}
-            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="" method="post">
+            <form class="bg-white shadow-xl rounded-lg p-8 border border-gray-100" action="{{ route('login.post') }}" method="POST" onsubmit="return procesarLogin(event)">
+                @csrf
+
+                {{-- Mostrar errores generales --}}
+                @if ($errors->any())
+                    <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li class="text-sm">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 {{-- Email --}}
                 <div class="mb-6">
@@ -24,13 +36,18 @@
                         Correo Electrónico
                     </label>
                     <input 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition @error('email') border-red-500 @enderror" 
                         type="email" 
                         name="email" 
                         id="email" 
                         placeholder="tu@email.com"
+                        value="{{ old('email') }}"
+                        onblur="validarCampoEmail()"
                         required
                     >
+                    @error('email')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Contraseña --}}
@@ -39,13 +56,16 @@
                         Contraseña
                     </label>
                     <input 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition" 
+                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-900 focus:border-transparent transition @error('password') border-red-500 @enderror" 
                         type="password" 
                         name="password" 
                         id="password" 
                         placeholder="••••••••"
-                        required
+                        onblur="validarCampoPassword()"
                     >
+                    @error('password')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- Recordarme y Olvidé contraseña --}}
@@ -121,8 +141,12 @@
                 </p>
             </div>
 
-        </div>
-
     </div>
 
 @endsection
+
+{{-- Incluir SweetAlert2 desde CDN --}}
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('js/login.js') }}"></script>
+@endpush
