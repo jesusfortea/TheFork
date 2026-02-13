@@ -4,6 +4,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RestauranteController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RolController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -58,5 +59,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
     Route::delete('/reservas/{id}', [AdminController::class, 'eliminarReserva'])->name('reservas.eliminar');
     
     Route::get('/roles', [AdminController::class, 'roles'])->name('roles');
+    Route::post('/roles', [AdminController::class, 'rolstore'])->name('roles.store');
+    Route::put('/roles/{rol}', [AdminController::class, 'rolupdate'])->name('roles.update');
+    Route::delete('/roles/{rol}', [AdminController::class, 'roldestroy'])->name('roles.destroy');
 });
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Restaurante;
 use App\Models\Reserva;
+use App\Models\Rol;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -215,6 +216,35 @@ class AdminController extends Controller
     public function roles()
     {
         $this->verificarAdmin();
-        return view('admin.roles');
+
+        $roles = Rol::all();
+
+        return view('admin.roles', ['roles' => $roles]);
+    }
+
+
+    public function roldestroy(Rol $rol)
+    {
+        if ($rol->users()->exists()) {
+            return back()->with('error', 'No puedes eliminar un rol que tiene usuarios asignados.');
+        }
+
+        $rol->delete();
+
+        return back()->with('success', 'Rol eliminado correctamente.');
+    }
+
+    public function rolstore(Request $request)
+    {
+        $request->validate(['nombre' => 'required|string|max:255|unique:rols']);
+        Rol::create(['nombre' => $request->nombre]);
+        return back()->with('success', 'Rol creado correctamente.');
+    }
+
+    public function rolupdate(Request $request, Rol $rol)
+    {
+        $request->validate(['nombre' => 'required|string|max:255|unique:rols,nombre,' . $rol->id]);
+        $rol->update(['nombre' => $request->nombre]);
+        return back()->with('success', 'Rol actualizado correctamente.');
     }
 }

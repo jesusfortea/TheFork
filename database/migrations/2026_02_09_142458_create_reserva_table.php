@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('reservas', function (Blueprint $table) {
             $table->id();
+            $table->date('fecha');
 
             // -- Id user -- //
             $table->unsignedBigInteger('id_user');
