@@ -68,7 +68,11 @@ class AdminController extends Controller
     public function restaurantes()
     {
         $this->verificarAdmin();
-        return view('admin.restaurantes');
+        
+        // Obtener todos los restaurantes con su tipo de cocina
+        $restaurantes = Restaurante::with('tipo')->get();
+        
+        return view('admin.restaurantes', compact('restaurantes'));
     }
 
     /**
