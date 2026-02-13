@@ -59,7 +59,102 @@ class AdminController extends Controller
     public function usuarios()
     {
         $this->verificarAdmin();
-        return view('admin.usuarios');
+        
+        // Obtener todos los usuarios con su rol
+        $usuarios = User::with('rol')->orderBy('created_at', 'desc')->get();
+        
+        return view('admin.usuarios', compact('usuarios'));
+    }
+    
+    /**
+     * Eliminar un usuario (soporta AJAX y tradicional)
+     */
+    public function eliminarUsuario($id)
+    {
+        $this->verificarAdmin();
+        
+        try {
+            $usuario = User::findOrFail($id);
+            
+            // No permitir que el admin se elimine a sí mismo
+            if ($usuario->id === auth()->id()) {
+                // Si es AJAX, devolver JSON
+                if (request()->wantsJson() || request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'No puedes eliminarte a ti mismo'
+                    ], 403);
+                }
+                return redirect()->route('admin.usuarios')->with('error', 'No puedes eliminarte a ti mismo');
+            }
+            
+            $usuario->delete();
+            
+            // Si es AJAX, devolver JSON
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Usuario eliminado correctamente'
+                ]);
+            }
+            
+            // Si es tradicional, redirect
+            return redirect()->route('admin.usuarios')->with('success', 'Usuario eliminado correctamente');
+        } catch (\Exception $e) {
+            // Si es AJAX
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar el usuario'
+                ], 500);
+            }
+            return redirect()->route('admin.usuarios')->with('error', 'Error al eliminar el usuario');
+        }
+    }
+    
+    /**
+     * Mostrar formulario de edición de usuario
+     */
+    public function editarUsuario($id)
+    {
+        $this->verificarAdmin();
+        
+        $usuario = User::with('rol')->findOrFail($id);
+        $roles = \App\Models\Rol::all();
+        
+        return view('admin.editar_usuario', compact('usuario', 'roles'));
+    }
+    
+    /**
+     * Actualizar un usuario
+     */
+    public function actualizarUsuario(Request $request, $id)
+    {
+        $this->verificarAdmin();
+        
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'rol_id' => 'required|exists:rols,id',
+        ]);
+        
+        try {
+            $usuario = User::findOrFail($id);
+            $usuario->name = $request->name;
+            $usuario->email = $request->email;
+            $usuario->rol_id = $request->rol_id;
+            
+            // Si hay una nueva contraseña, actualizarla
+            if ($request->filled('password')) {
+                $usuario->password = bcrypt($request->password);
+            }
+            
+            $usuario->save();
+            
+            return redirect()->route('admin.usuarios')->with('success', 'Usuario actualizado correctamente');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.usuarios')->with('error', 'Error al actualizar el usuario');
+        }
     }
 
     /**
@@ -81,7 +176,84 @@ class AdminController extends Controller
     public function reservas()
     {
         $this->verificarAdmin();
-        return view('admin.reservas');
+        
+        // Obtener todas las reservas con sus relaciones
+        $reservas = Reserva::with(['usuario', 'restaurante'])->orderBy('created_at', 'desc')->get();
+        
+        return view('admin.reservas', compact('reservas'));
+    }
+    
+    
+    /**
+     * Eliminar una reserva (soporta AJAX y tradicional)
+     */
+    public function eliminarReserva($id)
+    {
+        $this->verificarAdmin();
+        
+        try {
+            $reserva = Reserva::findOrFail($id);
+            $reserva->delete();
+            
+            // Si es AJAX, devolver JSON
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Reserva eliminada correctamente'
+                ]);
+            }
+            
+            return redirect()->route('admin.reservas')->with('success', 'Reserva eliminada correctamente');
+        } catch (\Exception $e) {
+            // Si es AJAX
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar la reserva'
+                ], 500);
+            }
+            return redirect()->route('admin.reservas')->with('error', 'Error al eliminar la reserva');
+        }
+    }
+    
+    /**
+     * Mostrar formulario de edición de reserva
+     */
+    public function editarReserva($id)
+    {
+        $this->verificarAdmin();
+        
+        $reserva = Reserva::with(['usuario', 'restaurante'])->findOrFail($id);
+        $usuarios = User::all();
+        $restaurantes = Restaurante::all();
+        
+        return view('admin.editar_reserva', compact('reserva', 'usuarios', 'restaurantes'));
+    }
+    
+    /**
+     * Actualizar una reserva
+     */
+    public function actualizarReserva(Request $request, $id)
+    {
+        $this->verificarAdmin();
+        
+        $request->validate([
+            'id_user' => 'required|exists:users,id',
+            'id_restaurante' => 'required|exists:restaurantes,id',
+            'fecha_hora' => 'required|date',
+        ]);
+        
+        try {
+            $reserva = Reserva::findOrFail($id);
+            $reserva->id_user = $request->id_user;
+            $reserva->id_restaurante = $request->id_restaurante;
+            $reserva->fecha_hora = $request->fecha_hora;
+            $reserva->save();
+            
+            return redirect()->route('admin.reservas')->with('success', 'Reserva actualizada correctamente');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.reservas')->with('error', 'Error al actualizar la reserva');
+        }
     }
 
     public function roles()

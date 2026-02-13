@@ -8,23 +8,13 @@ class Restaurante extends Model
 {
     protected $table = 'restaurantes';
     
-    protected $fillable = [
-        'titulo',
-        'descripcion',
-        'imagen',
-        'ubicacion',
-        'precio',
-        'cheff',
-        'menu',
-        'estado',
-        'id_tipo'
-    ];
+    protected $fillable = ['titulo', 'descripcion', 'imagen', 'ubicacion', 'precio', 'cheff', 'menu', 'id_tipo', 'estado'];
     
     /**
-     * Relación: Un restaurante pertenece a un tipo de cocina
+     * Relación: Un restaurante tiene muchas reservas
      */
-    public function tipo()
+    public function reservas()
     {
-        return $this->belongsTo(Tipo::class, 'id_tipo');
+        return $this->hasMany(Reserva::class, 'id_restaurante');
     }
 }

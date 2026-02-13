@@ -3,34 +3,8 @@
 @section('title', 'TheFork | Panel de Administración')
 @section('contenido')
 
+
 <div class="min-h-screen bg-gradient-to-br from-teal-50 to-white">
-    
-    {{-- Navbar superior para Admin --}}
-    <nav class="bg-white shadow-md border-b-2 border-teal-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <h1 class="text-2xl font-bold text-teal-900">TheFork</h1>
-                    <span class="text-xs bg-teal-900 text-white px-2 py-1 rounded font-semibold">ADMIN</span>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <span class="text-gray-700 text-sm">Hola, <strong class="text-teal-900">{{ Auth::user()->name }}</strong></span>
-                    
-                    <a href="{{ route('home') }}" class="text-teal-900 hover:text-teal-700 transition text-sm font-semibold">
-                        Ir al sitio →
-                    </a>
-                    
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-teal-900 hover:bg-teal-800 text-white font-bold py-2 px-4 rounded-lg transition shadow-md hover:shadow-lg">
-                            Cerrar Sesión
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </nav>
 
     {{-- Contenido principal --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

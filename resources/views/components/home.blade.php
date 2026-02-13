@@ -11,13 +11,16 @@
 <body class="bg-white text-slate-800">
     
     <header class="border-b">
-        <nav class="border-b border-gray-100">
-            <ul class="flex justify-end gap-6 px-10 py-2 text-[11px] font-bold text-teal-900 uppercase">
-                <li><a href="{{ route('crear.restaurante') }}">🏠 Registrar mi restaurante</a></li>
-                <li class="text-gray-300">|</li>
-                <li><a href="">Ayuda</a></li>
-            </ul>
-        </nav>
+        {{-- Barra superior: No mostrar en admin --}}
+        @if(!Request::is('admin/*'))
+            <nav class="border-b border-gray-100">
+                <ul class="flex justify-end gap-6 px-10 py-2 text-[11px] font-bold text-teal-900 uppercase">
+                    <li><a href="{{ route('crear.restaurante') }}">🏠 Registrar mi restaurante</a></li>
+                    <li class="text-gray-300">|</li>
+                    <li><a href="">Ayuda</a></li>
+                </ul>
+            </nav>
+        @endif
 
         <nav class="flex justify-between items-center px-10 py-3">
             <ul class="flex items-center w-full">
@@ -26,11 +29,25 @@
                 </li>
                 
                 <section class="flex ml-auto gap-3 items-center">
-                    <li>
-                        <button class="px-4 py-2 border rounded font-bold text-[12px]">
-                            📱 DESCARGAR LA APLICACIÓN
-                        </button>
-                    </li>
+                    {{-- Botón Volver (solo en páginas de admin) --}}
+                    @if(Request::is('admin/*') && !Request::is('admin/dashboard'))
+                        <li>
+                            <button 
+                                onclick="window.history.back()" 
+                                class="px-4 py-2 border border-teal-900 text-teal-900 rounded font-bold text-[12px] hover:bg-teal-50 transition">
+                                ← VOLVER
+                            </button>
+                        </li>
+                    @endif
+                    
+                    {{-- Botón descargar app: No mostrar en admin --}}
+                    @if(!Request::is('admin/*'))
+                        <li>
+                            <button class="px-4 py-2 border rounded font-bold text-[12px]">
+                                📱 DESCARGAR LA APLICACIÓN
+                            </button>
+                        </li>
+                    @endif
                     <li>
                         @auth
                             {{-- Usuario autenticado: icono con dropdown --}}
