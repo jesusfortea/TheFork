@@ -1,9 +1,7 @@
 @extends('components.restaurant')
 
 @section('title', 'TheFork | Restaurantes')
-@extends('components.restaurant')
 
-@section('title', 'TheFork | Restaurantes')
 @section('contenido')
     
 <section class="py-10 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -15,58 +13,11 @@
             <p class="text-gray-500 text-base">Explora los mejores lugares para comer según nuestra comunidad.</p>
         </div>
 
-        {{-- Barra de búsqueda y filtros --}}
-        <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-6 mb-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                
-                {{-- Búsqueda --}}
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Buscar restaurante</label>
-                    <input 
-                        type="text" 
-                        id="searchInput" 
-                        placeholder="Busca por nombre, ubicación o chef..."
-                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#006252] focus:border-transparent transition">
-                </div>
-
-                {{-- Filtro por precio --}}
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Precio máximo</label>
-                    <select 
-                        id="precioFilter" 
-                        class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#006252] focus:border-transparent transition">
-                        <option value="999">Todos los precios</option>
-                        <option value="20">Hasta 20€</option>
-                        <option value="30">Hasta 30€</option>
-                        <option value="50">Hasta 50€</option>
-                        <option value="100">Hasta 100€</option>
-                    </select>
-                </div>
-            </div>
-
-            {{-- Ordenar --}}
-            <div class="mt-4 flex items-center justify-between flex-wrap gap-3">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm font-bold text-gray-700">Ordenar por:</span>
-                    <button id="sortNombre" class="px-4 py-2 bg-gray-100 hover:bg-[#006252] hover:text-white text-gray-700 rounded-lg font-semibold text-sm transition">
-                        Nombre
-                    </button>+
-                    <button id="sortPrecio" class="px-4 py-2 bg-gray-100 hover:bg-[#006252] hover:text-white text-gray-700 rounded-lg font-semibold text-sm transition">
-                        Precio
-                    </button>
-                </div>
-                
-                <div id="resultCount" class="text-sm text-gray-500 font-medium">
-                    Mostrando <span id="countNumber" class="font-bold text-[#006252]">{{ count($restaurantes) }}</span> restaurantes
-                </div>
-            </div>
-        </div>
-
         {{-- Lista de restaurantes --}}
         <div class="max-w-[900px] space-y-6" id="restaurantList">
             
             @foreach($restaurantes as $restaurante)
-            <div class="restaurant-card bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden flex flex-col md:flex-row h-auto md:h-72 hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
+            <div class="restaurant-card bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden flex flex-col md:flex-row h-auto hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
                  data-titulo="{{ strtolower($restaurante->titulo) }}"
                  data-ubicacion="{{ strtolower($restaurante->ubicacion) }}"
                  data-cheff="{{ strtolower($restaurante->cheff) }}"
@@ -162,11 +113,24 @@
                             </span>
                         </div>
                         
-                        {{-- Menú destacado --}}
+                        {{-- Menú destacado con opción de expandir --}}
                         <div class="mt-4 bg-gray-50 rounded-xl p-3 border-l-4 border-[#006252]">
-                            <p class="text-sm italic text-gray-600 font-medium leading-relaxed">
-                                "{{ $restaurante->menu }}"
-                            </p>
+                            <div class="menu-container">
+                                {{-- Texto del menú con ID único --}}
+                                <p class="menu-text text-sm italic text-gray-600 font-medium leading-relaxed line-clamp-2" id="menu-{{ $restaurante->id }}">
+                                    "{{ $restaurante->menu }}"
+                                </p>
+                                
+                                {{-- Botón "Ver más" / "Ver menos" --}}
+                                @if(strlen($restaurante->menu) > 100)
+                                <button class="toggle-menu mt-2 text-xs font-bold text-[#006252] hover:text-[#004d40] transition flex items-center gap-1" data-menu-id="menu-{{ $restaurante->id }}">
+                                    <span class="toggle-text">Ver más</span>
+                                    <svg class="w-3 h-3 toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </button>
+                                @endif
+                            </div>
                         </div>
                     </div>
 
@@ -201,20 +165,55 @@
                 </div>
             @endif
 
-            {{-- Mensaje cuando no hay resultados de búsqueda --}}
-            <div id="noResults" class="hidden bg-white p-16 text-center rounded-2xl border-2 border-dashed border-gray-300">
-                <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-                <p class="text-gray-500 font-bold text-lg">No se encontraron restaurantes con esos criterios.</p>
-                <p class="text-gray-400 text-sm mt-2">Intenta cambiar los filtros de búsqueda.</p>
-            </div>
-
         </div>
     </div>
 </section>
 
-{{-- Script JavaScript --}}
-<script src="{{ asset('js/restaurantes.js') }}"></script>
+{{-- Script JavaScript para expandir menú --}}
+<script>
+    // Esperar a que cargue el DOM
+    document.onreadystatechange = function() {
+        if (document.readyState === 'complete') {
+            inicializarMenuExpandible();
+        }
+    };
+
+    function inicializarMenuExpandible() {
+        // Obtener todos los botones de "Ver más"
+        const toggleButtons = document.querySelectorAll('.toggle-menu');
+        
+        toggleButtons.forEach(function(button) {
+            button.onclick = function() {
+                // Obtener el ID del menú desde el data attribute
+                const menuId = this.getAttribute('data-menu-id');
+                const menuText = document.getElementById(menuId);
+                const toggleTextSpan = this.querySelector('.toggle-text');
+                const toggleIcon = this.querySelector('.toggle-icon');
+                
+                // Verificar si está expandido
+                const isExpanded = !menuText.classList.contains('line-clamp-2');
+                
+                if (isExpanded) {
+                    // Colapsar
+                    menuText.classList.add('line-clamp-2');
+                    toggleTextSpan.textContent = 'Ver más';
+                    
+                    // Rotar icono hacia abajo
+                    toggleIcon.style.transform = 'rotate(0deg)';
+                } else {
+                    // Expandir
+                    menuText.classList.remove('line-clamp-2');
+                    toggleTextSpan.textContent = 'Ver menos';
+                    
+                    // Rotar icono hacia arriba
+                    toggleIcon.style.transform = 'rotate(180deg)';
+                }
+                
+                // Añadir transición suave
+                toggleIcon.style.transition = 'transform 0.3s ease';
+            };
+        });        
+    }
+</script>
 
 @endsection
