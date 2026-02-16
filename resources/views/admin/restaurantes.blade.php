@@ -115,13 +115,39 @@
                                         {{ Str::limit($restaurante->cheff, 20) }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <form action="{{ route('restaurantes.destroy', $restaurante->id) }}" method="POST" class="inline" onsubmit="return confirmarEliminacion(event, '{{ $restaurante->titulo }}')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition shadow hover:shadow-lg">
-                                                🗑️ Eliminar
+                                        {{-- 
+                                            BOTONES DE ACCIÓN
+                                            - Botón Editar: redirige al formulario de edición
+                                            - Botón Eliminar: elimina el restaurante con confirmación
+                                        --}}
+                                        <div class="flex gap-2">
+                                            {{-- 
+                                                BOTÓN EDITAR
+                                                onclick: evento inline que redirige a la página de edición
+                                                window.location.href: cambia la URL del navegador
+                                                route('restaurantes.edit', $restaurante->id): genera la URL /restaurantes/{id}/editar
+                                            --}}
+                                            <button 
+                                                type="button" 
+                                                onclick="window.location.href='{{ route('restaurantes.edit', $restaurante->id) }}'" 
+                                                class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition shadow hover:shadow-lg">
+                                                ✏️ Editar
                                             </button>
-                                        </form>
+
+                                            {{-- 
+                                                BOTÓN ELIMINAR
+                                                - Formulario con método DELETE
+                                                - onsubmit: evento inline que muestra confirmación antes de enviar
+                                                - return confirmarEliminacion(): ejecuta la función y retorna false para prevenir submit automático
+                                            --}}
+                                            <form action="{{ route('restaurantes.destroy', $restaurante->id) }}" method="POST" class="inline" onsubmit="return confirmarEliminacion(event, '{{ $restaurante->titulo }}')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition shadow hover:shadow-lg">
+                                                    🗑️ Eliminar
+                                                </button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
