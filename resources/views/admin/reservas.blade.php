@@ -3,117 +3,90 @@
 @section('title', 'TheFork | Gestión de Reservas')
 @section('contenido')
 
-{{-- Meta tag para CSRF (necesario para AJAX) --}}
 <meta name="csrf-token" content="{{ csrf_token() }}">
-
-{{-- SweetAlert2 CDN --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="min-h-screen bg-gradient-to-br from-teal-50 to-white">
-
-    {{-- Contenido principal --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
-        {{-- Título de la página --}}
-        <div class="bg-white rounded-lg shadow-xl p-8 mb-8 border border-gray-100">
-            <h2 class="text-3xl font-bold text-teal-900 mb-3">
-                📅 Gestión de Reservas
-            </h2>
-            <p class="text-gray-600">
-                Administra todas las reservas del sistema
-            </p>
+
+        {{-- Cabecera --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-8">
+            <h2 class="text-3xl font-bold text-teal-900 mb-1">📅 Gestión de Reservas</h2>
+            <p class="text-gray-500 text-sm">Administra todas las reservas del sistema</p>
         </div>
 
-        {{-- Mensajes de éxito o error --}}
-        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 shadow-md">
-                <strong class="font-bold">✓ Éxito:</strong>
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
+        {{-- Tabla --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
-        @if(session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 shadow-md">
-                <strong class="font-bold">✗ Error:</strong>
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        {{-- Tabla de reservas --}}
-        <div class="bg-white rounded-lg shadow-lg border border-gray-100 overflow-hidden">
-            
-            {{-- Header de la tabla --}}
             <div class="bg-teal-900 text-white px-6 py-4">
-                <h3 class="text-lg font-bold">Lista de Reservas ({{ $reservas->count() }})</h3>
+                <h3 class="text-base font-bold">
+                    Lista de Reservas
+                    (<span id="contador-reservas">{{ $reservas->count() }}</span>)
+                </h3>
             </div>
 
-            {{-- Contenido de la tabla --}}
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-gray-100">
+                    <thead class="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wider">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">ID</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Usuario</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email Usuario</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Restaurante</th>
-                            <th class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Fecha de Reserva</th>
-                            <th class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">Acciones</th>
+                            <th class="px-6 py-3 text-left">ID</th>
+                            <th class="px-6 py-3 text-left">Usuario</th>
+                            <th class="px-6 py-3 text-left">Email</th>
+                            <th class="px-6 py-3 text-left">Restaurante</th>
+                            <th class="px-6 py-3 text-left">Fecha</th>
+                            <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="divide-y divide-gray-100 text-sm">
                         @forelse($reservas as $reserva)
-                            {{-- ID único para AJAX --}}
-                            <tr id="fila-reserva-{{ $reserva->id }}" class="hover:bg-gray-50 transition">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    #{{ $reserva->id }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-semibold text-gray-900">
-                                        {{ $reserva->usuario ? $reserva->usuario->name : 'Usuario eliminado' }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-600">
-                                        {{ $reserva->usuario ? $reserva->usuario->email : 'N/A' }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-sm font-semibold text-teal-900">
-                                        {{ $reserva->restaurante ? $reserva->restaurante->titulo : 'Restaurante eliminado' }}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                    @if($reserva->fecha_hora)
-                                        <div class="font-semibold text-teal-900">{{ \Carbon\Carbon::parse($reserva->fecha_hora)->format('d/m/Y H:i') }}</div>
-                                        <div class="text-xs text-gray-500">Fecha reserva</div>
-                                    @else
-                                        <div>{{ $reserva->created_at->format('d/m/Y H:i') }}</div>
-                                        <div class="text-xs text-gray-500">Fecha creación</div>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                                    <div class="flex justify-center gap-2">
-                                        {{-- Botón Editar --}}
-                                        <a href="{{ route('admin.reservas.editar', $reserva->id) }}" 
-                                           class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition shadow-md hover:shadow-lg text-xs font-semibold">
-                                            ✏️ Editar
-                                        </a>
-                                        
-                                        {{-- Botón Eliminar con AJAX --}}
-                                        <button 
-                                            onclick="eliminarReservaAjax({{ $reserva->id }})"
-                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg transition shadow-md hover:shadow-lg text-xs font-semibold">
-                                            🗑️ Eliminar
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr id="fila-reserva-{{ $reserva->id }}" class="hover:bg-gray-50 transition">
+
+                            {{-- Campos ocultos para el modal --}}
+                            <input type="hidden" data-id-user        value="{{ $reserva->id_user }}">
+                            <input type="hidden" data-id-restaurante value="{{ $reserva->id_restaurante }}">
+                            <input type="hidden" data-fecha-hora     value="{{ $reserva->fecha_hora ? \Carbon\Carbon::parse($reserva->fecha_hora)->format('Y-m-d\TH:i') : '' }}">
+
+                            <td class="px-6 py-4 text-gray-400 font-mono">#{{ $reserva->id }}</td>
+                            <td class="px-6 py-4 font-semibold text-gray-900" data-usuario-nombre>
+                                {{ $reserva->usuario?->name ?? 'Usuario eliminado' }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-500">
+                                {{ $reserva->usuario?->email ?? 'N/A' }}
+                            </td>
+                            <td class="px-6 py-4 font-semibold text-teal-900" data-restaurante-nombre>
+                                {{ $reserva->restaurante?->titulo ?? 'Restaurante eliminado' }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-600" data-fecha-display>
+                                @if($reserva->fecha_hora)
+                                    {{ \Carbon\Carbon::parse($reserva->fecha_hora)->format('d/m/Y H:i') }}
+                                @else
+                                    {{ $reserva->created_at->format('d/m/Y H:i') }}
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex justify-center gap-2">
+
+                                    <button
+                                        data-btn-editar-reserva
+                                        data-id="{{ $reserva->id }}"
+                                        class="bg-teal-700 hover:bg-teal-800 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                        ✏️ Editar
+                                    </button>
+
+                                    <button
+                                        data-btn-eliminar-reserva
+                                        data-id="{{ $reserva->id }}"
+                                        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                                        🗑️ Eliminar
+                                    </button>
+
+                                </div>
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
-                                    No hay reservas registradas
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" class="px-6 py-10 text-center text-gray-400">No hay reservas registradas</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -121,10 +94,82 @@
         </div>
 
     </div>
-
 </div>
 
-{{-- Script AJAX para operaciones sin recargar página --}}
-<script src="{{ asset('js/crud_ajax.js') }}"></script>
+{{-- ══════════════ MODAL EDITAR ══════════════ --}}
+<div id="modal-reserva"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
+
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+
+        {{-- Header --}}
+        <div class="bg-teal-900 px-6 py-5 flex items-center justify-between">
+            <div>
+                <h3 class="text-white font-bold text-lg">📅 Editar Reserva</h3>
+                <p class="text-teal-300 text-xs mt-0.5">Los cambios se aplican al instante</p>
+            </div>
+            <button id="btn-cerrar-modal-reserva"
+                    class="text-teal-300 hover:text-white transition text-2xl leading-none">&times;</button>
+        </div>
+
+        {{-- Cuerpo --}}
+        <form id="form-editar-reserva" class="p-6 space-y-5" novalidate>
+            <input type="hidden" id="modal-reserva-id">
+
+            <div id="modal-reserva-error"
+                 class="hidden bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg">
+            </div>
+
+            {{-- Usuario --}}
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Usuario</label>
+                <select id="modal-id-user"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white"
+                        required>
+                    <option value="">— Selecciona un usuario —</option>
+                    @foreach(\App\Models\User::orderBy('name')->get() as $usuario)
+                        <option value="{{ $usuario->id }}">{{ $usuario->name }} ({{ $usuario->email }})</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Restaurante --}}
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Restaurante</label>
+                <select id="modal-id-restaurante"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white"
+                        required>
+                    <option value="">— Selecciona un restaurante —</option>
+                    @foreach(\App\Models\Restaurante::orderBy('titulo')->get() as $restaurante)
+                        <option value="{{ $restaurante->id }}">{{ $restaurante->titulo }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Fecha y hora --}}
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Fecha y hora</label>
+                <input id="modal-fecha-hora" type="datetime-local"
+                       class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition"
+                       required>
+            </div>
+
+            {{-- Botones --}}
+            <div class="flex gap-3 pt-2">
+                <button id="btn-guardar-reserva" type="submit"
+                        class="flex-1 bg-teal-900 hover:bg-teal-800 text-white font-bold py-2.5 rounded-lg text-sm transition">
+                    Guardar cambios
+                </button>
+                <button id="btn-cancelar-modal-reserva" type="button"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg text-sm transition">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script src="{{ asset('js/crud_reservas.js') }}"></script>
 
 @endsection

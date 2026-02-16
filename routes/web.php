@@ -53,6 +53,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
     Route::delete('/usuarios/{id}', [AdminController::class, 'eliminarUsuario'])->name('usuarios.eliminar');
     
     Route::get('/restaurantes', [AdminController::class, 'restaurantes'])->name('restaurantes');
+    Route::put('/restaurantes/{id}',    [AdminController::class, 'actualizarRestaurante'])->name('restaurantes.actualizar');
+    Route::delete('/restaurantes/{id}', [AdminController::class, 'eliminarRestaurante'])->name('restaurantes.eliminar');
     
     Route::get('/reservas', [AdminController::class, 'reservas'])->name('reservas');
     Route::get('/reservas/{id}/editar', [AdminController::class, 'editarReserva'])->name('reservas.editar');

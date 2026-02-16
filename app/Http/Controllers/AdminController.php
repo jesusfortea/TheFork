@@ -131,43 +131,144 @@ class AdminController extends Controller
     public function actualizarUsuario(Request $request, $id)
     {
         $this->verificarAdmin();
-        
+
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'rol_id' => 'required|exists:rols,id',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email,' . $id,
+            'rol_id'   => 'required|exists:rols,id',
+            'password' => 'nullable|string|min:8',
         ]);
-        
+
         try {
-            $usuario = User::findOrFail($id);
-            $usuario->name = $request->name;
-            $usuario->email = $request->email;
-            $usuario->rol_id = $request->rol_id;
-            
-            // Si hay una nueva contraseña, actualizarla
+            $usuario          = User::findOrFail($id);
+            $usuario->name    = $request->name;
+            $usuario->email   = $request->email;
+            $usuario->rol_id  = $request->rol_id;
+
             if ($request->filled('password')) {
                 $usuario->password = bcrypt($request->password);
             }
-            
+
             $usuario->save();
-            
+
+            // Si es AJAX devuelve JSON
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Usuario actualizado correctamente',
+                ]);
+            }
+
             return redirect()->route('admin.usuarios')->with('success', 'Usuario actualizado correctamente');
+
         } catch (\Exception $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al actualizar el usuario',
+                ], 500);
+            }
+
             return redirect()->route('admin.usuarios')->with('error', 'Error al actualizar el usuario');
         }
     }
 
-    /**
-     * Gestión de Restaurantes
-     */
     public function restaurantes()
     {
         $this->verificarAdmin();
-        
-        // Obtener todos los restaurantes con su tipo de cocina
         $restaurantes = Restaurante::with('tipo')->get();
-        
         return view('admin.restaurantes', compact('restaurantes'));
+    }
+
+    // =============================================
+    // 2. NUEVO método — actualizarRestaurante()
+    // =============================================
+
+    public function actualizarRestaurante(Request $request, $id)
+    {
+        $this->verificarAdmin();
+
+        $request->validate([
+            'titulo'      => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'ubicacion'   => 'required|string',
+            'precio'      => 'required|integer|min:0',
+            'cheff'       => 'required|string|max:255',
+            'menu'        => 'required|string',
+            'id_tipo'     => 'required|exists:tipos,id',
+            'estado'      => 'nullable|boolean',
+        ]);
+
+        try {
+            $restaurante              = Restaurante::findOrFail($id);
+            $restaurante->titulo      = $request->titulo;
+            $restaurante->descripcion = $request->descripcion;
+            $restaurante->ubicacion   = $request->ubicacion;
+            $restaurante->precio      = $request->precio;
+            $restaurante->cheff       = $request->cheff;
+            $restaurante->menu        = $request->menu;
+            $restaurante->id_tipo     = $request->id_tipo;
+            $restaurante->estado      = $request->estado ? true : false;
+            $restaurante->save();
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Restaurante actualizado correctamente',
+                ]);
+            }
+
+            return redirect()->route('admin.restaurantes')->with('success', 'Restaurante actualizado correctamente');
+
+        } catch (\Exception $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al actualizar el restaurante',
+                ], 500);
+            }
+
+            return redirect()->route('admin.restaurantes')->with('error', 'Error al actualizar el restaurante');
+        }
+    }
+
+    // =============================================
+    // 3. NUEVO método — eliminarRestaurante() (admin)
+    // =============================================
+
+    public function eliminarRestaurante($id)
+    {
+        $this->verificarAdmin();
+
+        try {
+            $restaurante = Restaurante::findOrFail($id);
+
+            // Eliminar imagen del servidor si es local
+            if ($restaurante->imagen && !Str::startsWith($restaurante->imagen, 'http') && file_exists(public_path($restaurante->imagen))) {
+                unlink(public_path($restaurante->imagen));
+            }
+
+            $restaurante->delete();
+
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Restaurante eliminado correctamente',
+                ]);
+            }
+
+            return redirect()->route('admin.restaurantes')->with('success', 'Restaurante eliminado correctamente');
+
+        } catch (\Exception $e) {
+            if (request()->wantsJson() || request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al eliminar el restaurante',
+                ], 500);
+            }
+
+            return redirect()->route('admin.restaurantes')->with('error', 'Error al eliminar el restaurante');
+        }
     }
 
     /**
@@ -230,28 +331,44 @@ class AdminController extends Controller
         return view('admin.editar_reserva', compact('reserva', 'usuarios', 'restaurantes'));
     }
     
+
     /**
-     * Actualizar una reserva
+     * Actualizar una reserva (soporta AJAX y tradicional)
      */
     public function actualizarReserva(Request $request, $id)
     {
         $this->verificarAdmin();
-        
+
         $request->validate([
-            'id_user' => 'required|exists:users,id',
+            'id_user'        => 'required|exists:users,id',
             'id_restaurante' => 'required|exists:restaurantes,id',
-            'fecha_hora' => 'required|date',
+            'fecha_hora'     => 'required|date',
         ]);
-        
+
         try {
-            $reserva = Reserva::findOrFail($id);
-            $reserva->id_user = $request->id_user;
+            $reserva                 = Reserva::findOrFail($id);
+            $reserva->id_user        = $request->id_user;
             $reserva->id_restaurante = $request->id_restaurante;
-            $reserva->fecha_hora = $request->fecha_hora;
+            $reserva->fecha_hora     = $request->fecha_hora;
             $reserva->save();
-            
+
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Reserva actualizada correctamente',
+                ]);
+            }
+
             return redirect()->route('admin.reservas')->with('success', 'Reserva actualizada correctamente');
+
         } catch (\Exception $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error al actualizar la reserva',
+                ], 500);
+            }
+
             return redirect()->route('admin.reservas')->with('error', 'Error al actualizar la reserva');
         }
     }

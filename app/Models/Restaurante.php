@@ -17,4 +17,14 @@ class Restaurante extends Model
     {
         return $this->hasMany(Reserva::class, 'id_restaurante');
     }
+
+    public function resenas()
+    {
+        return $this->hasMany(Resena::class, 'id_restaurante');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'id_tipo');
+    }
 }

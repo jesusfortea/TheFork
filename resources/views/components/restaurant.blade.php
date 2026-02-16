@@ -47,10 +47,51 @@
                 </button>
             </div>
 
-            <button class="flex items-center gap-2 font-bold text-teal-900 text-[13px] hover:underline whitespace-nowrap uppercase">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
-                Iniciar sesión
-            </button>
+            @auth
+                <div class="relative">
+                    <button
+                        onclick="document.getElementById('user-dropdown-2').classList.toggle('hidden')"
+                        class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-teal-50 transition">
+                        <div class="w-8 h-8 bg-teal-900 text-white rounded-full flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+                            </svg>
+                        </div>
+                        <span class="text-[12px] font-bold text-teal-900 hidden sm:block">{{ Auth::user()->name }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-teal-900" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+
+                    <div id="user-dropdown-2" class="hidden absolute right-0 mt-2 w-44 bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden">
+                        <div class="px-4 py-3 border-b border-gray-100">
+                            <p class="text-[11px] text-gray-400 uppercase font-semibold">Conectado como</p>
+                            <p class="text-[13px] font-bold text-teal-900 truncate">{{ Auth::user()->name }}</p>
+                        </div>
+                        <ul class="py-1 text-[13px]">
+                            <li>
+                                <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-gray-700 hover:bg-teal-50 font-semibold">
+                                    🛠️ Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-semibold">
+                                        🚪 Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            @else
+                <a href="{{ route('login') }}">
+                    <button class="px-4 py-2 bg-teal-900 text-white rounded-lg font-bold text-[12px] hover:bg-teal-800 transition">
+                        INICIAR SESIÓN
+                    </button>
+                </a>
+            @endauth
         </nav>
 
         <div class="px-10 pb-4 flex items-center gap-20">
