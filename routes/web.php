@@ -13,7 +13,19 @@ Route::controller(RestauranteController::class)->group(function(){
     Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
     Route::get('/restaurantes', 'show')->name('show.restaurante');
     Route::post('/solicitud-restaurante', 'solicitud')->name('enviar.solicitud');
+    
+    // Ruta para mostrar el formulario de edición de un restaurante
+    // GET: /restaurantes/{id}/editar - muestra el formulario con los datos actuales
+    Route::get('/restaurantes/{id}/editar', 'edit')->name('restaurantes.edit');
+    
+    // Ruta para procesar la actualización de un restaurante
+    // PUT: /restaurantes/{id} - actualiza los datos en la base de datos
+    Route::put('/restaurantes/{id}', 'update')->name('restaurantes.update');
+    
+    // Ruta para eliminar un restaurante
+    // DELETE: /restaurantes/{id} - elimina el restaurante
     Route::delete('/restaurantes/{id}', 'destroy')->name('restaurantes.destroy');
+    
     Route::get('/', 'home')->name('home');
 
 });
