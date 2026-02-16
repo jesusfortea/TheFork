@@ -21,65 +21,65 @@
             
             <div class="flex overflow-x-auto gap-12 pb-4 no-scrollbar scroll-smooth">
                 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Italiano</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Japonés</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1544124499-58912cbddaad?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Mediterráneo</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Burgers</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Mexicano</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1564671165093-20688ff1fffa?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Español</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1525755662778-989d0524087e?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Chino</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Arroces</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Indio</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1544025162-d76694265947?w=200" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Americano</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Saludable</span>
-                </div>
+                </a>
 
-                <div class="flex flex-col items-center min-w-[100px] cursor-pointer group">
+                <a href="{{ route('show.restaurante') }}" class="flex flex-col items-center min-w-[100px] cursor-pointer group">
                     <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=150" class="w-16 h-16 rounded-full object-cover border-2 border-transparent group-hover:border-[#006252] transition shadow-sm">
                     <span class="text-xs font-bold mt-2 text-gray-700 uppercase">Postres</span>
-                </div>
+                </a>
 
             </div>
 
@@ -90,7 +90,7 @@
         </div>
     </div>
 
-{{-- SECCIÓN: RESTAURANTES POPULARES CON LÓGICA DE BLOQUEO --}}
+    {{-- SECCIÓN: RESTAURANTES POPULARES CON LÓGICA DE BLOQUEO --}}
     <section class="py-12 bg-white">
 
         <div class="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,71 +107,57 @@
             <div class="relative">
                 {{-- Contenedor de las Cards --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 @guest blur-md select-none pointer-events-none @endguest">
-                    
-                    @php
-                        // Datos de ejemplo para las tarjetas
-                        $restaurantes = [
-                            ['nombre' => 'La Tagliatella', 'img' => 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600', 'tag' => '-30% en carta', 'nota' => '9.2'],
-                            ['nombre' => 'Sushi Bar Hana', 'img' => 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600', 'tag' => 'PAY: 200 Yums', 'nota' => '8.8'],
-                            ['nombre' => 'El Rincón del Mar', 'img' => 'https://images.unsplash.com/photo-1544124499-58912cbddaad?w=600', 'tag' => 'Nuevo', 'nota' => '9.5'],
-                            ['nombre' => 'Steak House Prime', 'img' => 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600', 'tag' => '-50% en carta', 'nota' => '9.0'],
-                        ];
-                    @endphp
 
-                    @foreach($restaurantes as $res)
-                    <div class="group border border-gray-100 rounded-xl p-2 transition">
-        
-                        <div class="relative aspect-[4/3] rounded-xl overflow-hidden mb-3">
-                            <img src="{{ $res['img'] }}" class="w-full h-full object-cover">
-                        </div>
-        
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-gray-900 truncate">{{ $res['nombre'] }}</h3>
-                            <span class="bg-[#56ac2d] text-white px-1.5 py-0.5 rounded text-sm font-bold">{{ $res['nota'] }}</span>
-                        </div>
-        
-                        <p class="text-gray-500 text-xs">Precio medio 30€</p>
-        
-                    </div>
+                    @foreach($restaurantes_destacados as $res)
+                        <a href="{{ route('show.restaurante') }}" class="group border border-gray-100 rounded-xl p-2 transition">
+
+                            <div class="relative aspect-[4/3] rounded-xl overflow-hidden mb-3">
+                                <img src="{{ $res->imagen }}" alt="{{ $res->titulo }}" class="w-full h-full object-cover">
+                            </div>
+
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-gray-900 truncate">{{ $res->titulo }}</h3>
+                                <span class="bg-[#56ac2d] text-white px-1.5 py-0.5 rounded text-sm font-bold">
+                                    {{ $res->resenas_avg_puntuacion ? number_format($res->resenas_avg_puntuacion, 1) : 'N/A' }}
+                                </span>
+                            </div>
+
+                            <p class="text-gray-500 text-xs">Precio medio {{ $res->precio }}€</p>
+
+                        </a>
                     @endforeach
-        
                 </div>
 
-                {{-- Overlay de Contenido Bloqueado (Solo visible para invitados) --}}
-                @guest
-                <div class="absolute inset-0 z-20 flex items-center justify-center">
-                    <div class="bg-white/90 backdrop-blur-sm border border-gray-200 p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4">
-                    
-                        <div class="w-16 h-16 bg-teal-100 text-[#006252] rounded-full flex items-center justify-center mx-auto mb-4">
-                    
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                    
-                        </div>
-                    
-                        <h3 class="text-xl font-black text-gray-900 mb-2">Contenido bloqueado</h3>
-                    
-                        <p class="text-gray-600 mb-6">Regístrate o inicia sesión para ver los precios, fotos reales y ofertas exclusivas de estos restaurantes.</p>
-                    
-                        <div class="space-y-3">
-                    
-                            <a href="/register" class="block w-full bg-[#006252] text-white font-bold py-3 rounded-lg hover:bg-[#00473d] transition">
-                                Crear cuenta gratis
-                    
-                            </a>
-                    
-                            <a href="/login" class="block w-full text-[#006252] font-bold py-2 hover:underline transition text-sm">
-                                Ya tengo cuenta, iniciar sesión
-                    
-                            </a>
-                    
-                        </div>
-                    
-                    </div>
-                </div>
-                @endguest
             </div>
+
+    {{-- Overlay de Contenido Bloqueado (Solo visible para invitados) --}}
+    @guest
+    <div class="absolute inset-0 z-20 flex items-center justify-center">
+        <div class="bg-white/90 backdrop-blur-sm border border-gray-200 p-8 rounded-2xl shadow-2xl text-center max-w-sm mx-4">
+
+            <div class="w-16 h-16 bg-teal-100 text-[#006252] rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+            </div>
+
+            <h3 class="text-xl font-black text-gray-900 mb-2">Contenido bloqueado</h3>
+
+            <p class="text-gray-600 mb-6">Regístrate o inicia sesión para ver los precios, fotos reales y ofertas exclusivas de estos restaurantes.</p>
+
+            <div class="space-y-3">
+                <a href="/register" class="block w-full bg-[#006252] text-white font-bold py-3 rounded-lg hover:bg-[#00473d] transition">
+                    Crear cuenta gratis
+                </a>
+                <a href="/login" class="block w-full text-[#006252] font-bold py-2 hover:underline transition text-sm">
+                    Ya tengo cuenta, iniciar sesión
+                </a>
+            </div>
+
+        </div>
+    </div>
+    @endguest
+</div>
         </div>
     </section>
 
@@ -267,7 +253,7 @@
     </section>
 
 
-    <section class="bg-[#00473d] rounded-xl overflow-hidden flex flex-col md:flex-row items-center relative shadow-md">
+    <section class="bg-[#00473d] overflow-hidden flex flex-col md:flex-row items-center relative shadow-md">
         <div class="p-10 md:w-1/2 z-10">
         
             <div class="bg-[#f3a002] text-[#00473d] font-black text-xs inline-block px-2 py-1 rounded mb-4">FIDELIDAD</div>

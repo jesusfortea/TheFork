@@ -57,10 +57,16 @@ class RestauranteController extends Controller
     }
 
     public function home(){
+        $restaurantes = Restaurante::all();
+        $restaurantes_destacados = Restaurante::where('estado', true)
+            ->withAvg('resenas', 'puntuacion')
+            ->take(4)
+            ->get();
 
-        $restaurante = Restaurante::all();
-        return view('index', ['restaurantes' => $restaurante]);
-
+        return view('index', [
+            'restaurantes' => $restaurantes,
+            'restaurantes_destacados' => $restaurantes_destacados
+        ]);
     }
 
     /**
