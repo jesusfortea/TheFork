@@ -253,6 +253,6 @@
 
 <script src="{{ asset('js/menu_expandible.js') }}"></script>
 <script src="{{ asset('js/restaurante_modal.js') }}"></script>
-<script src="{{ asset('js/filtros_restaurantes.js') }}"></script>
+<script src="{{ asset('js/filtros_restaurantes_page.js') }}"></script>
 
 @endsection
