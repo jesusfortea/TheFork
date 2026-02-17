@@ -68,6 +68,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
 });
 
 
+Route::middleware('auth')->group(function() {
+    Route::post('/reservas', [RestauranteController::class, 'guardarReserva'])->name('reservas.store');
+    Route::post('/resenas', [RestauranteController::class, 'guardarResena'])->name('resenas.store');
+});
+
+Route::get('/resenas/{id}', [RestauranteController::class, 'obtenerResenas'])->name('resenas.get');
+Route::get('/restaurantes/filtrar', [RestauranteController::class, 'filtrar'])->name('restaurantes.filtrar');
+
 
 Route::view('/mail', 'mail.reservaMail');
 
