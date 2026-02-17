@@ -1,9 +1,9 @@
 @extends('components.home')
 
-@section('title', 'TheFork | Crear restaurante')
+@section('title', 'TheFork | Editar restaurante')
 @section('contenido')
     
-    {{-- FORMULARIO DE CREACIÓN DE RESTAURANTE CON DISEÑO PROFESIONAL --}}
+    {{-- FORMULARIO DE EDICIÓN DE RESTAURANTE CON DISEÑO PROFESIONAL --}}
 
     {{-- 
         CONTENEDOR PRINCIPAL CON RESPONSIVE
@@ -16,18 +16,18 @@
         {{-- COLUMNA IZQUIERDA - INFORMACIÓN --}}
         <div class="order-2 md:order-1">
             <h1 class="text-3xl md:text-4xl lg:text-5xl text-center md:text-left w-full font-bold text-gray-800 mb-6">
-                Accede a millones de comensales y llena tus mesas vacías
+                Edita la información de tu restaurante
             </h1>
 
             <ul class="p-5 space-y-3">
                 <li class="pt-2 pb-2 list-disc text-gray-700 text-base md:text-lg">
-                    Únete a la plataforma de reservas número 1
+                    Actualiza los datos de tu restaurante
                 </li>
                 <li class="pt-2 pb-2 list-disc text-gray-700 text-base md:text-lg">
-                    Abre tus reservas al instante en todos los canales: TheFork, TripAdvisor, tu sitio web, Facebook, Instagram y más
+                    Mantén tu información siempre actualizada
                 </li>
                 <li class="pt-2 pb-2 list-disc text-gray-700 text-base md:text-lg">
-                    Atrae a más comensales con herramientas de marketing
+                    Atrae a más comensales con información precisa
                 </li>
             </ul>
             
@@ -40,13 +40,29 @@
             order-2: Se muestra segundo en desktop
         --}}
         <div class="order-1 md:order-2">
-            {{-- Formulario para crear un restaurante --}}
-            <form class="bg-[#00665a] p-6 md:p-8 rounded-lg shadow-xl" action="{{ route('enviar.solicitud') }}" method="post" enctype="multipart/form-data">
+            {{-- 
+                FORMULARIO DE EDICIÓN
+                - action: ruta que procesa la actualización (restaurantes.update)
+                - method: POST (requerido por los navegadores)
+                - @method('PUT'): indica a Laravel que es una petición PUT
+                - enctype: permite subir archivos (imágenes)
+            --}}
+            <form class="bg-[#00665a] p-6 md:p-8 rounded-lg shadow-xl" action="{{ route('restaurantes.update', $restaurante->id) }}" method="POST" enctype="multipart/form-data">
 
+                {{-- 
+                    @csrf: Token de seguridad obligatorio en Laravel para formularios
+                    Protege contra ataques CSRF (Cross-Site Request Forgery)
+                --}}
                 @csrf
+                
+                {{-- 
+                    @method('PUT'): Especifica que este formulario usa el método HTTP PUT
+                    Los navegadores solo soportan GET y POST, esto simula PUT
+                --}}
+                @method('PUT')
 
                 <h1 class="mb-6 text-2xl md:text-3xl w-full text-white font-bold">
-                    🍽️ Registrar mi restaurante
+                    ✏️ Editar restaurante
                 </h1>
 
                 {{-- Mostrar errores de validación si existen --}}
@@ -64,20 +80,27 @@
                     CAMPO DE IMAGEN PERSONALIZADO
                     - Input file oculto
                     - Botón personalizado que activa el input
-                    - Preview de la imagen seleccionada
+                    - Preview de la imagen actual
                 --}}
                 <div class="mb-6">
-                    <label class="block text-white font-semibold mb-2">Imagen del restaurante *</label>
+                    <label class="block text-white font-semibold mb-2">Imagen del restaurante</label>
                     
                     {{-- Contenedor de preview de imagen --}}
                     <div class="border-2 border-white border-dashed rounded-lg p-6 text-center bg-[#005a4d] hover:bg-[#004d42] transition">
                         
-                        {{-- Preview de imagen --}}
+                        {{-- Mostrar imagen actual si existe --}}
                         <div id="preview-container" class="mb-4">
-                            <div class="w-40 h-40 bg-gray-700 mx-auto rounded-lg flex items-center justify-center">
-                                <span class="text-gray-400 text-4xl">📷</span>
-                            </div>
-                            <p class="text-white text-xs mt-2" id="preview-text">Sin imagen</p>
+                            @if($restaurante->imagen)
+                                <img src="{{ asset($restaurante->imagen) }}" 
+                                     alt="{{ $restaurante->titulo }}" 
+                                     id="image-preview"
+                                     class="w-40 h-40 object-cover mx-auto rounded-lg shadow-md">
+                                <p class="text-white text-xs mt-2">Imagen actual</p>
+                            @else
+                                <div class="w-40 h-40 bg-gray-700 mx-auto rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-400 text-4xl">📷</span>
+                                </div>
+                            @endif
                         </div>
 
                         {{-- Input file oculto --}}
@@ -90,11 +113,11 @@
                         
                         {{-- Botón personalizado para seleccionar archivo --}}
                         <label for="img" class="inline-block bg-white text-[#00665a] font-bold py-3 px-6 rounded-lg cursor-pointer hover:bg-gray-100 transition shadow-md">
-                            📁 Seleccionar imagen
+                            📁 Seleccionar nueva imagen
                         </label>
                         
                         <p class="text-white text-xs mt-3 opacity-80">
-                            JPG, PNG o WEBP
+                            JPG, PNG o WEBP (opcional - mantiene la actual si no se cambia)
                         </p>
                     </div>
                 </div>
@@ -106,7 +129,7 @@
                            type="text" 
                            name="titulo" 
                            id="titulo" 
-                           value="{{ old('titulo') }}" 
+                           value="{{ old('titulo', $restaurante->titulo) }}" 
                            placeholder="Nombre del restaurante..."
                            required>
                 </div>
@@ -119,7 +142,7 @@
                               id="desc" 
                               rows="5" 
                               placeholder="Describe tu restaurante..."
-                              required>{{ old('desc') }}</textarea>
+                              required>{{ old('desc', $restaurante->descripcion) }}</textarea>
                 </div>
 
                 {{-- 
@@ -136,7 +159,7 @@
                                 required>
                             <option value="">- Selecciona un tipo -</option>
                             @foreach($tipos as $tipo)
-                                <option value="{{$tipo->id}}" {{ old('tipo') == $tipo->id ? 'selected' : '' }}>
+                                <option value="{{$tipo->id}}" {{ old('tipo', $restaurante->id_tipo) == $tipo->id ? 'selected' : '' }}>
                                     {{$tipo->nombre}}
                                 </option>
                             @endforeach
@@ -150,52 +173,12 @@
                     </div>
                 </div>
 
-                {{-- SECCIÓN DE ETIQUETAS INSIGNIA --}}
-                <div class="mb-5">
-                    <label class="block text-white font-semibold mb-2">Etiquetas Insignia</label>
-                    <div class="border-2 border-white rounded-lg p-4 bg-[#005a4d]">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                            @foreach ($etiquetas as $etiqueta)
-                                @if ($etiqueta->tipo == "Insignia")
-                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-[#007d6f] p-2 rounded transition">
-                                        <input type="checkbox" 
-                                               name="etiqueta_insignia[]" 
-                                               value="{{ $etiqueta->id }}" 
-                                               class="w-4 h-4 text-yellow-400 bg-gray-700 border-gray-600 rounded focus:ring-yellow-300 focus:ring-2">
-                                        <span class="text-white text-sm">{{ $etiqueta->nombre }}</span>
-                                    </label>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
-                {{-- SECCIÓN DE ETIQUETAS DESCRIPTIVAS --}}
-                <div class="mb-5">
-                    <label class="block text-white font-semibold mb-2">Etiquetas Descriptivas</label>
-                    <div class="border-2 border-white rounded-lg p-4 bg-[#005a4d]">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                            @foreach ($etiquetas as $etiqueta)
-                                @if ($etiqueta->tipo == "Descriptivo")
-                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-[#007d6f] p-2 rounded transition">
-                                        <input type="checkbox" 
-                                               name="etiqueta[]" 
-                                               value="{{ $etiqueta->id }}" 
-                                               class="w-4 h-4 text-yellow-400 bg-gray-700 border-gray-600 rounded focus:ring-yellow-300 focus:ring-2">
-                                        <span class="text-white text-sm">{{ $etiqueta->nombre }}</span>
-                                    </label>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-
                 {{-- CAMPO LOCALIZACIÓN --}}
                 <div class="mb-5">
                     <label for="ubi" class="block text-white font-semibold mb-2">Localización *</label>
                     <input class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
                            type="text" 
-                           value="{{ old('ubi') }}" 
+                           value="{{ old('ubi', $restaurante->ubicacion) }}" 
                            name="ubi" 
                            id="ubi" 
                            placeholder="Dirección completa..."
@@ -207,7 +190,7 @@
                     <label for="cheff" class="block text-white font-semibold mb-2">Chef *</label>
                     <input class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
                            type="text" 
-                           value="{{ old('cheff') }}" 
+                           value="{{ old('cheff', $restaurante->cheff) }}" 
                            name="cheff" 
                            id="cheff" 
                            placeholder="Nombre del chef..."
@@ -219,7 +202,7 @@
                     <label for="precio" class="block text-white font-semibold mb-2">Precio medio (€) *</label>
                     <input type="number" 
                            class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
-                           value="{{ old('precio') }}" 
+                           value="{{ old('precio', $restaurante->precio) }}" 
                            name="precio" 
                            id="precio" 
                            placeholder="Precio por persona..."
@@ -235,14 +218,25 @@
                               id="menu" 
                               rows="5" 
                               placeholder="Platos principales del menú..."
-                              required>{{ old('menu') }}</textarea>
+                              required>{{ old('menu', $restaurante->menu) }}</textarea>
                 </div>
 
-                {{-- BOTÓN DE ENVÍO --}}
-                <button type="submit" 
-                        class="w-full p-4 bg-white text-[#00665a] font-bold rounded-lg cursor-pointer hover:bg-yellow-300 hover:shadow-lg transition transform hover:scale-105 text-center">
-                    ✅ Enviar solicitud
-                </button>
+                {{-- 
+                    BOTONES DE ACCIÓN
+                    - Responsive: stack vertical en mobile, horizontal en tablet+
+                --}}
+                <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                    <button type="submit" 
+                            class="flex-1 p-4 bg-white text-[#00665a] font-bold rounded-lg cursor-pointer hover:bg-yellow-300 hover:shadow-lg transition transform hover:scale-105 text-center">
+                        ✅ Actualizar restaurante
+                    </button>
+                    
+                    <button type="button" 
+                            class="flex-1 p-4 bg-gray-600 text-white font-bold rounded-lg cursor-pointer hover:bg-gray-700 hover:shadow-lg transition text-center" 
+                            onclick="confirmarCancelar(); return false;">
+                        ❌ Cancelar
+                    </button>
+                </div>
 
             </form>
         </div>
@@ -284,7 +278,8 @@
         }
     </style>
 
-    {{-- JAVASCRIPT PARA PREVIEW DE IMAGEN --}}
+    {{-- JAVASCRIPT PARA PREVIEW DE IMAGEN Y CONFIRMACIÓN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         /**
          * Función para mostrar preview de la imagen seleccionada
@@ -293,8 +288,8 @@
          */
         function previewImage(event) {
             const input = event.target;
+            const preview = document.getElementById('image-preview');
             const container = document.getElementById('preview-container');
-            const previewText = document.getElementById('preview-text');
             
             // Verificar si se seleccionó un archivo
             if (input.files && input.files[0]) {
@@ -302,18 +297,46 @@
                 
                 // Cuando la imagen se carga, actualizar el preview
                 reader.onload = function(e) {
-                    // Actualizar el contenedor con la nueva imagen
-                    container.innerHTML = `
-                        <img src="${e.target.result}" 
-                             id="image-preview"
-                             class="w-40 h-40 object-cover mx-auto rounded-lg shadow-md">
-                        <p class="text-white text-xs mt-2">Imagen seleccionada ✓</p>
-                    `;
+                    // Si ya existe una imagen, actualizarla
+                    if (preview) {
+                        preview.src = e.target.result;
+                    } else {
+                        // Si no existe, crear el elemento img
+                        container.innerHTML = `
+                            <img src="${e.target.result}" 
+                                 id="image-preview"
+                                 class="w-40 h-40 object-cover mx-auto rounded-lg shadow-md">
+                            <p class="text-white text-xs mt-2">Nueva imagen seleccionada</p>
+                        `;
+                    }
                 };
                 
                 // Leer el archivo como URL de datos
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        /**
+         * Función para confirmar si el usuario quiere cancelar la edición
+         * Se ejecuta cuando se hace click en el botón "Cancelar"
+         * Muestra una alerta de confirmación antes de salir
+         */
+        function confirmarCancelar() {
+            // Swal.fire: función de SweetAlert2 para mostrar alertas personalizadas
+            Swal.fire({
+                title: '¿Cancelar edición?',
+                text: 'Los cambios no guardados se perderán',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#0f766e',
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Continuar editando'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.history.back();
+                }
+            });
         }
     </script>
 

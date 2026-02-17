@@ -13,7 +13,19 @@ Route::controller(RestauranteController::class)->group(function(){
     Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
     Route::get('/restaurantes', 'show')->middleware('auth')->name('show.restaurante');
     Route::post('/solicitud-restaurante', 'solicitud')->name('enviar.solicitud');
+    
+    // Ruta para mostrar el formulario de edición de un restaurante
+    // GET: /restaurantes/{id}/editar - muestra el formulario con los datos actuales
+    Route::get('/restaurantes/{id}/editar', 'edit')->name('restaurantes.edit');
+    
+    // Ruta para procesar la actualización de un restaurante
+    // PUT: /restaurantes/{id} - actualiza los datos en la base de datos
+    Route::put('/restaurantes/{id}', 'update')->name('restaurantes.update');
+    
+    // Ruta para eliminar un restaurante
+    // DELETE: /restaurantes/{id} - elimina el restaurante
     Route::delete('/restaurantes/{id}', 'destroy')->name('restaurantes.destroy');
+    
     Route::get('/', 'home')->name('home');
 
 });
@@ -74,6 +86,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
 Route::middleware('auth')->group(function() {
     Route::post('/reservas', [RestauranteController::class, 'guardarReserva'])->name('reservas.store');
     Route::post('/resenas', [RestauranteController::class, 'guardarResena'])->name('resenas.store');
+    
+    // RUTAS DE LIKES (favoritos)
+    // POST para dar/quitar like (toggle) - requiere autenticación
+    Route::post('/restaurantes/{id}/toggle-like', [RestauranteController::class, 'toggleLike'])->name('restaurantes.toggle-like');
+    // GET para ver página de favoritos - requiere autenticación
+    Route::get('/mis-favoritos', [RestauranteController::class, 'misFavoritos'])->name('mis.favoritos');
 });
 
 Route::get('/resenas/{id}', [RestauranteController::class, 'obtenerResenas'])->name('resenas.get');

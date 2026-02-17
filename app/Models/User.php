@@ -54,4 +54,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Rol::class);
     }
+
+    /**
+     * RELACIÓN: Un usuario puede dar like a muchos restaurantes
+     * 
+     * Esta relación permite obtener todos los likes que ha dado un usuario.
+     * Uso: $user->likes (obtiene colección de likes del usuario)
+     * Uso: $user->likes()->with('restaurante') (likes con info del restaurante)
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'id_user');
+    }
 }

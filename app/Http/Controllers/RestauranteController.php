@@ -58,11 +58,25 @@ class RestauranteController extends Controller
 
     }
 
+    /**
+     * MÉTODO HOME - Página Principal
+     * 
+     * Carga todos los restaurantes de la base de datos y los pasa a la vista index
+     * Con EAGER LOADING para evitar problema N+1 al acceder a relaciones
+     */
     public function home(){
-        $restaurantes = Restaurante::all();
+        // Obtener todos los restaurantes con su relación 'tipo' (eager loading)
+        // El with('tipo') evita hacer queries adicionales al mostrar el tipo de cada restaurante
+        $restaurantes = Restaurante::with('tipo')
+                                    ->where('estado', true)  // Solo restaurantes activos
+                                    ->get();
+        
+        // Obtener restaurantes destacados (los 4 primeros con mejor promedio de reseñas)
         $restaurantes_destacados = Restaurante::where('estado', true)
-            ->withAvg('resenas', 'puntuacion')
-            ->take(4)
+            ->with('tipo')
+            ->withAvg('resenas', 'puntuacion')  // Calcular promedio de puntuación
+            ->orderByDesc('resenas_avg_puntuacion')  // Ordenar por mejor puntuación
+            ->take(4)  // Solo los 4 mejores
             ->get();
 
         return view('index', [
@@ -92,6 +106,81 @@ class RestauranteController extends Controller
         return redirect()->back()->with('success', 'Restaurante eliminado correctamente');
     }
 
+    /**
+     * Muestra el formulario de edición de un restaurante
+     * @param int $id - ID del restaurante a editar
+     */
+    public function edit($id){
+        
+        // Buscar el restaurante que queremos editar por su ID
+        // findOrFail() lanza un error 404 si no lo encuentra
+        $restaurante = Restaurante::findOrFail($id);
+        
+        // Obtener todas las etiquetas disponibles para mostrarlas en el formulario
+        $etiquetas = Etiqueta::all();
+        
+        // Obtener todos los tipos de cocina disponibles para el select
+        $tipos = Tipo::all();
+        
+        // Retornar la vista de edición pasándole los datos necesarios
+        // - $restaurante: los datos actuales del restaurante a editar
+        // - $etiquetas: todas las etiquetas disponibles
+        // - $tipos: todos los tipos de cocina disponibles
+        return view('restaurante.edit', [
+            'restaurante' => $restaurante,
+            'etiquetas' => $etiquetas,
+            'tipos' => $tipos
+        ]);
+    }
+
+    /**
+     * Actualiza un restaurante existente en la base de datos
+     * @param CrearRestauranteRequest $request - Datos validados del formulario
+     * @param int $id - ID del restaurante a actualizar
+     */
+    public function update(CrearRestauranteRequest $request, $id){
+        
+        // Buscar el restaurante que vamos a actualizar
+        $restaurante = Restaurante::findOrFail($id);
+        
+        // GESTIÓN DE LA IMAGEN
+        // Verificar si se subió una nueva imagen
+        if ($request->hasFile('img')) {
+            
+            // Si existe una imagen antigua, eliminarla del servidor
+            if ($restaurante->imagen && file_exists(public_path($restaurante->imagen))) {
+                unlink(public_path($restaurante->imagen));
+            }
+            
+            // Procesar la nueva imagen
+            $imagen = $request->file('img');
+            // Crear un nombre único usando timestamp + nombre original
+            $nombreImagen = time() . '_' . $imagen->getClientOriginalName();
+            // Mover la imagen a la carpeta public/media
+            $imagen->move(public_path('media'), $nombreImagen);
+            // Actualizar la ruta de la imagen en el objeto restaurante
+            $restaurante->imagen = 'media/' . $nombreImagen;
+        }
+        // Si no se subió nueva imagen, mantener la imagen actual (no hacer nada)
+        
+        // ACTUALIZAR LOS DATOS DEL RESTAURANTE
+        // Asignar cada campo del formulario al modelo
+        $restaurante->titulo = $request->titulo;
+        $restaurante->descripcion = $request->desc;
+        $restaurante->ubicacion = $request->ubi;
+        $restaurante->precio = $request->precio;
+        $restaurante->cheff = $request->cheff;
+        $restaurante->menu = $request->menu;
+        $restaurante->id_tipo = $request->tipo;
+        // Nota: el campo 'estado' no se actualiza aquí, se mantiene el valor actual
+        
+        // Guardar los cambios en la base de datos
+        // save() actualiza el registro existente
+        $restaurante->save();
+        
+        // Redirigir a la página de gestión con un mensaje de éxito
+        return redirect()->route('admin.restaurantes')->with('success', 'Restaurante actualizado correctamente');
+    }
 
     /**
     * Guardar reserva via AJAX
@@ -309,5 +398,92 @@ class RestauranteController extends Controller
                 'total' => 0,
             ], 500);
         }
+    }
+
+    /**
+     * TOGGLE LIKE - Dar o Quitar Like a un Restaurante
+     * 
+     * Este método maneja de forma inteligente dar y quitar likes:
+     * - Si el usuario YA dio like al restaurante → LO ELIMINA (quita el corazón)
+     * - Si el usuario NO dio like al restaurante → LO CREA (añade el corazón)
+     * 
+     * Se usa AJAX desde el frontend, por eso retorna JSON.
+     * 
+     * @param int $idRestaurante - ID del restaurante al que se quiere dar/quitar like
+     * @return JsonResponse - Respuesta JSON con el estado del like
+     */
+    public function toggleLike($idRestaurante)
+    {
+        // PASO 1: Verificar que el usuario esté autenticado
+        // auth()->check() retorna true si hay un usuario logeado
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debes iniciar sesión para dar like',
+            ], 401); // 401 = No autorizado
+        }
+
+        // PASO 2: Buscar si YA EXISTE un like de este usuario para este restaurante
+        // where() busca registros que cumplan las condiciones
+        // first() retorna el primer registro encontrado, o null si no existe
+        $likeExistente = \App\Models\Like::where('id_user', auth()->id())
+                                          ->where('id_restaurante', $idRestaurante)
+                                          ->first();
+
+        // PASO 3: Decidir qué hacer según si existe o no el like
+        if ($likeExistente) {
+            // ❌ SI EXISTE: El usuario YA dio like → LO QUITAMOS
+            $likeExistente->delete(); // Elimina el registro de la base de datos
+            
+            return response()->json([
+                'success' => true,
+                'liked' => false,  // Ya NO tiene like
+                'message' => 'Like eliminado correctamente'
+            ]);
+            
+        } else {
+            // ✅ SI NO EXISTE: El usuario NO había dado like → LO CREAMOS
+            \App\Models\Like::create([
+                'id_user' => auth()->id(),              // ID del usuario autenticado
+                'id_restaurante' => $idRestaurante,     // ID del restaurante
+                'like' => true                           // Siempre true en nuestra implementación
+            ]);
+            
+            return response()->json([
+                'success' => true,
+                'liked' => true,  // Ahora SÍ tiene like
+                'message' => 'Like agregado correctamente'
+            ]);
+        }
+    }
+
+    /**
+     * MIS FAVORITOS - Página con los Restaurantes que le Gustan al Usuario
+     * 
+     * Este método muestra una página con todos los restaurantes a los que el usuario
+     * ha dado like (sus favoritos).
+     * 
+     * Proceso:
+     * 1. Obtiene todos los likes del usuario autenticado
+     * 2. Carga la información completa del restaurante relacionado (eager loading)
+     * 3. Pasa los datos a la vista
+     * 
+     * @return View - Vista favoritos.blade.php con los restaurantes favoritos
+     */
+    public function misFavoritos()
+    {
+        // PASO 1: Obtener todos los likes del usuario autenticado
+        // auth()->user()->likes obtiene la relación definida en el modelo User
+        // ->with('restaurante') hace "EAGER LOADING" - carga el restaurante relacionado
+        //   Esto evita hacer N queries (problema N+1)
+        // ->get() ejecuta la query y retorna la colección
+        $favoritos = auth()->user()
+                          ->likes()
+                          ->with('restaurante')  // Incluye info del restaurante
+                          ->get();
+
+        // PASO 2: Retornar la vista con los datos
+        // compact('favoritos') es equivalente a ['favoritos' => $favoritos]
+        return view('favoritos', compact('favoritos'));
     }
 }
