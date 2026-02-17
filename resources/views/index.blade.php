@@ -109,29 +109,71 @@
                 {{-- Contenedor de las Cards - Responsive Grid --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 @guest blur-md select-none pointer-events-none @endguest">
                     
-                    @php
-                        // Datos de ejemplo para las tarjetas
-                        $restaurantes = [
-                            ['nombre' => 'La Tagliatella', 'img' => 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600', 'tag' => '-30% en carta', 'nota' => '9.2'],
-                            ['nombre' => 'Sushi Bar Hana', 'img' => 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600', 'tag' => 'PAY: 200 Yums', 'nota' => '8.8'],
-                            ['nombre' => 'El Rincón del Mar', 'img' => 'https://images.unsplash.com/photo-1544124499-58912cbddaad?w=600', 'tag' => 'Nuevo', 'nota' => '9.5'],
-                            ['nombre' => 'Steak House Prime', 'img' => 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=600', 'tag' => '-50% en carta', 'nota' => '9.0'],
-                        ];
-                    @endphp
-
-                    @foreach($restaurantes as $res)
-                    <div class="group border border-gray-100 rounded-xl p-2 transition">
+                    {{-- 
+                        CARGA AUTOMÁTICA DE RESTAURANTES DESDE LA BASE DE DATOS
+                        El controlador pasa la variable $restaurantes con todos los restaurantes activos
+                    --}}
+                    @foreach($restaurantes as $restaurante)
+                    <div class="group border border-gray-100 rounded-xl p-2 transition hover:shadow-lg">
         
                         <div class="relative aspect-[4/3] rounded-xl overflow-hidden mb-3">
-                            <img src="{{ $res['img'] }}" class="w-full h-full object-cover">
+                            {{-- Imagen del restaurante --}}
+                            @if($restaurante->imagen)
+                                <img src="{{ asset($restaurante->imagen) }}" 
+                                     alt="{{ $restaurante->titulo }}"
+                                     class="w-full h-full object-cover">
+                            @else
+                                {{-- Imagen placeholder si no tiene --}}
+                                <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-400 text-6xl">🍽️</span>
+                                </div>
+                            @endif
+                            
+                            {{-- BOTÓN DE LIKE (CORAZÓN) - Solo visible para usuarios autenticados --}}
+                            @auth
+                                @php
+                                    // CARGA AUTOMÁTICA DEL ESTADO DEL LIKE
+                                    // Verificar si el usuario autenticado ya dio like a este restaurante
+                                    // Buscar en la tabla 'likes' si existe un registro con:
+                                    // - id_user = ID del usuario logueado
+                                    // - id_restaurante = ID del restaurante actual
+                                    $usuarioLike = \App\Models\Like::where('id_user', auth()->id())
+                                                                    ->where('id_restaurante', $restaurante->id)
+                                                                    ->exists();
+                                @endphp
+                                <button 
+                                    onclick="toggleLike({{ $restaurante->id }}, this)"
+                                    class="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition hover:scale-110"
+                                    title="{{ $usuarioLike ? 'Quitar de favoritos' : 'Agregar a favoritos' }}">
+                                    <span class="text-2xl">
+                                        {{-- Mostrar corazón rojo si ya tiene like, blanco si no --}}
+                                        {{ $usuarioLike ? '❤️' : '🤍' }}
+                                    </span>
+                                </button>
+                            @endauth
                         </div>
         
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-gray-900 truncate">{{ $res['nombre'] }}</h3>
-                            <span class="bg-[#56ac2d] text-white px-1.5 py-0.5 rounded text-sm font-bold">{{ $res['nota'] }}</span>
+                        <div class="space-y-2">
+                            {{-- Título y precio --}}
+                            <div class="flex justify-between items-start gap-2">
+                                <h3 class="font-bold text-gray-900 text-base line-clamp-1">
+                                    {{ $restaurante->titulo }}
+                                </h3>
+                                <span class="bg-[#006252] text-white px-2 py-0.5 rounded text-sm font-bold whitespace-nowrap">
+                                    {{ $restaurante->precio }}€
+                                </span>
+                            </div>
+                            
+                            {{-- Descripción --}}
+                            <p class="text-gray-600 text-xs line-clamp-2">
+                                {{ $restaurante->descripcion }}
+                            </p>
+                            
+                            {{-- Tipo de cocina --}}
+                            <p class="text-gray-500 text-xs">
+                                <span class="font-semibold">{{ $restaurante->tipo->nombre ?? 'Sin tipo' }}</span>
+                            </p>
                         </div>
-        
-                        <p class="text-gray-500 text-xs">Precio medio 30€</p>
         
                     </div>
                     @endforeach
@@ -381,5 +423,60 @@
         </div>
     </section>
 
+    {{-- JAVASCRIPT PARA EL SISTEMA DE LIKES --}}
+    <script>
+        /**
+         * FUNCIÓN: Toggle Like (Dar/Quitar Like)
+         * 
+         * Esta función se ejecuta cuando el usuario hace click en el corazón.
+         * Envía una petición AJAX al servidor para crear o eliminar el like.
+         * 
+         * @param {number} restauranteId - ID del restaurante
+         * @param {HTMLElement} button - El botón que se clickeó (para cambiar el emoji)
+         */
+        function toggleLike(restauranteId, button) {
+            // PASO 1: Obtener el CSRF token de Laravel (necesario para seguridad)
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            // PASO 2: Hacer petición AJAX al servidor
+            fetch(`/restaurantes/${restauranteId}/toggle-like`, {
+                method: 'POST',  // Método HTTP POST
+                headers: {
+                    'Content-Type': 'application/json',  // Enviamos JSON
+                    'X-CSRF-TOKEN': csrfToken             // Token de seguridad
+                },
+                body: JSON.stringify({})  // Cuerpo vacío (no necesitamos enviar datos extra)
+            })
+            .then(response => response.json())  // Convertir respuesta a JSON
+            .then(data => {
+                // PASO 3: Procesar la respuesta del servidor
+                if (data.success) {
+                    // ✅ ÉXITO: Cambiar el emoji del corazón según el nuevo estado
+                    const heartSpan = button.querySelector('span');
+                    
+                    if (data.liked) {
+                        // Usuario DIO LIKE → Mostrar corazón rojo
+                        heartSpan.textContent = '❤️';
+                        button.title = 'Quitar de favoritos';
+                    } else {
+                        // Usuario QUITÓ LIKE → Mostrar corazón blanco
+                        heartSpan.textContent = '🤍';
+                        button.title = 'Agregar a favoritos';
+                    }
+                    
+                    // Pequeña animación de "pop" al hacer click
+                    button.classList.add('scale-125');
+                    setTimeout(() => {
+                        button.classList.remove('scale-125');
+                    }, 200);
+                }
+            })
+            .catch(error => {
+                // ❌ ERROR: Mostrar mensaje en consola
+                console.error('Error al dar/quitar like:', error);
+                alert('Hubo un error. Por favor intenta de nuevo.');
+            });
+        }
+    </script>
 
 @endsection

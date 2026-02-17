@@ -86,6 +86,12 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
 Route::middleware('auth')->group(function() {
     Route::post('/reservas', [RestauranteController::class, 'guardarReserva'])->name('reservas.store');
     Route::post('/resenas', [RestauranteController::class, 'guardarResena'])->name('resenas.store');
+    
+    // RUTAS DE LIKES (favoritos)
+    // POST para dar/quitar like (toggle) - requiere autenticación
+    Route::post('/restaurantes/{id}/toggle-like', [RestauranteController::class, 'toggleLike'])->name('restaurantes.toggle-like');
+    // GET para ver página de favoritos - requiere autenticación
+    Route::get('/mis-favoritos', [RestauranteController::class, 'misFavoritos'])->name('mis.favoritos');
 });
 
 Route::get('/resenas/{id}', [RestauranteController::class, 'obtenerResenas'])->name('resenas.get');

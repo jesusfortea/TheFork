@@ -29,4 +29,18 @@ class Restaurante extends Model
     {
         return $this->belongsToMany(Etiqueta::class, 'restaurante_etiquetas', 'id_restaurante', 'id_etiqueta');
     }
+
+    /**
+     * RELACIÓN: Un restaurante puede tener muchos Likes
+     * 
+     * Esta relación permite obtener todos los likes que ha recibido un restaurante.
+     * Uso: $restaurante->likes (obtiene colección de likes)
+     * Uso: $restaurante->likes()->count() (cuenta cuántos likes tiene)
+     * 
+     * @return HasMany Relación con el modelo Like
+     */
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'id_restaurante');
+    }
 }

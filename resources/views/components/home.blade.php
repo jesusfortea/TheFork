@@ -67,6 +67,12 @@
                                     </a>
                                 </li>
                                 <li>
+                                    {{-- LINK A MIS FAVORITOS --}}
+                                    <a href="{{ route('mis.favoritos') }}" class="block px-4 py-2 text-gray-700 hover:bg-teal-50 font-semibold">
+                                        ❤️ Mis Favoritos
+                                    </a>
+                                </li>
+                                <li>
                                     <form action="{{ route('logout') }}" method="POST">
                                         @csrf
                                         <button type="submit" class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 font-semibold">
