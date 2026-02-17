@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        ini_set('curl.cainfo', base_path('cacert.pem'));
+        ini_set('openssl.cafile', base_path('cacert.pem'));
     }
 }
