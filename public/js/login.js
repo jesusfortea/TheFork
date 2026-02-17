@@ -236,11 +236,11 @@ function procesarLogin(event) {
             if (result.status === 200 && result.data.success) {
                 // Mostrar SweetAlert de éxito
                 Swal.fire({
-                    icon: 'success',
-                    title: '¡Bienvenido!',
-                    text: result.data.message || 'Has iniciado sesión correctamente',
-                    confirmButtonColor: '#0f766e', // Color teal-900
-                    confirmButtonText: 'Continuar'
+                    position: "top-end",
+                    icon: "success",
+                    title: "¡Sesión iniciada correctamente!",
+                    showConfirmButton: false,
+                    timer: 1500
                 }).then(function () {
                     // Redirigir a la página correspondiente
                     window.location.href = result.data.redirect;

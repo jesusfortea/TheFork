@@ -22,8 +22,9 @@ class RestauranteController extends Controller
     public function show(){
 
         $tipos = Tipo::all();
+        $restaurantes = Restaurante::all();
 
-        return view('components.restaurant', ['tipos' => $tipos]);
+        return view('mainpage', ['tipos' => $tipos, 'restaurantes' => $restaurantes]);
     }
 
 
@@ -56,9 +57,237 @@ class RestauranteController extends Controller
     }
 
     public function home(){
+        $restaurantes = Restaurante::all();
+        $restaurantes_destacados = Restaurante::where('estado', true)
+            ->withAvg('resenas', 'puntuacion')
+            ->take(4)
+            ->get();
 
-        $restaurante = Restaurante::all();
-        return view('index', ['restaurantes' => $restaurante]);
+        return view('index', [
+            'restaurantes' => $restaurantes,
+            'restaurantes_destacados' => $restaurantes_destacados
+        ]);
+    }
 
+    /**
+     * Elimina un restaurante de la base de datos
+     * @param int $id - ID del restaurante a eliminar
+     */
+    public function destroy($id){
+        
+        // Buscar el restaurante por ID
+        $restaurante = Restaurante::findOrFail($id);
+        
+        // Eliminar la imagen del servidor si existe
+        if ($restaurante->imagen && file_exists(public_path($restaurante->imagen))) {
+            unlink(public_path($restaurante->imagen));
+        }
+        
+        // Eliminar el restaurante de la base de datos
+        $restaurante->delete();
+        
+        // Redirigir con mensaje de éxito
+        return redirect()->back()->with('success', 'Restaurante eliminado correctamente');
+    }
+
+
+    /**
+    * Guardar reserva via AJAX
+    */
+    public function guardarReserva(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debes iniciar sesión para hacer una reserva',
+            ], 401);
+        }
+
+        try {
+            $request->validate([
+                'fecha_hora'      => 'required|date|after:now',
+                'id_restaurante'  => 'required|exists:restaurantes,id',
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errores = $e->validator->errors()->all();
+            return response()->json([
+                'success' => false,
+                'message' => implode(', ', $errores),
+            ], 422);
+        }
+
+        try {
+            $reserva = \App\Models\Reserva::create([
+                'fecha_hora'      => $request->fecha_hora,
+                'id_user'         => auth()->id(),
+                'id_restaurante'  => $request->id_restaurante,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reserva creada correctamente',
+                'reserva' => $reserva,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al crear la reserva: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Guardar reseña via AJAX
+     */
+    public function guardarResena(Request $request)
+    {
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Debes iniciar sesión para dejar una reseña',
+            ], 401);
+        }
+
+        try {
+            $request->validate([
+                'comentario'      => 'required|string|min:10|max:1000',
+                'puntuacion'      => 'required|integer|min:0|max:10',
+                'id_restaurante'  => 'required|exists:restaurantes,id',
+            ]);
+            
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Capturar errores de validación y devolverlos
+            $errores = $e->validator->errors()->all();
+            return response()->json([
+                'success' => false,
+                'message' => implode(', ', $errores),
+            ], 422);
+        }
+
+        try {
+            $resena = \App\Models\Resena::create([
+                'comentario'      => $request->comentario,
+                'puntuacion'      => $request->puntuacion,
+                'id_user'         => auth()->id(),
+                'id_restaurante'  => $request->id_restaurante,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Reseña publicada correctamente',
+                'resena'  => $resena,
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al publicar la reseña: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Obtener reseñas de un restaurante
+     */
+    public function obtenerResenas($idRestaurante)
+    {
+        $resenas = \App\Models\Resena::where('id_restaurante', $idRestaurante)
+            ->with('usuario')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($resena) {
+                return [
+                    'id'              => $resena->id,
+                    'comentario'      => $resena->comentario,
+                    'puntuacion'      => $resena->puntuacion,
+                    'usuario_nombre'  => $resena->usuario?->name ?? 'Usuario eliminado',
+                    'fecha'           => $resena->created_at->format('d/m/Y'),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'resenas' => $resenas,
+        ]);
+    }
+
+
+    /**
+     * Filtrar restaurantes via AJAX
+     */
+    public function filtrar(Request $request)
+    {
+        try {
+            $query = Restaurante::where('estado', true)
+                ->with(['tipo', 'etiquetas', 'resenas']);
+            
+            // 1. Búsqueda por título
+            if ($request->has('buscar') && $request->buscar != null) {
+                $query->where('titulo', 'LIKE', '%' . $request->buscar . '%');
+            }
+            
+            // 2. Filtrar por tipo de cocina
+            if ($request->has('tipo') && $request->tipo != null) {
+                $query->whereHas('tipo', function($q) use ($request) {
+                    $q->where('nombre', $request->tipo);
+                });
+            }
+            
+            // 3. Filtrar por rango de precio
+            if ($request->has('precio_min') && $request->precio_min != null) {
+                $query->where('precio', '>=', $request->precio_min);
+            }
+            
+            if ($request->has('precio_max') && $request->precio_max != null) {
+                $query->where('precio', '<=', $request->precio_max);
+            }
+            
+            // 4. Filtrar por etiqueta "Ofertas especiales"
+            if ($request->has('ofertas_especiales') && $request->ofertas_especiales == 'true') {
+                $query->whereHas('etiquetas', function($q) {
+                    $q->where('nombre', 'Ofertas especiales');
+                });
+            }
+            
+            // 5. Filtrar por etiqueta "Insider"
+            if ($request->has('insider') && $request->insider == 'true') {
+                $query->whereHas('etiquetas', function($q) {
+                    $q->where('nombre', 'Insider');
+                });
+            }
+            
+            // 6. Ordenar por mejor valorados
+            if ($request->has('mejor_valorados') && $request->mejor_valorados == 'true') {
+                $query->withAvg('resenas', 'puntuacion')
+                    ->orderByDesc('resenas_avg_puntuacion');
+            }
+            
+            $restaurantes = $query->get();
+            
+            // Añadir promedio de reseñas si no se ha añadido aún
+            if (!$request->has('mejor_valorados')) {
+                $restaurantes = $restaurantes->map(function($rest) {
+                    $rest->resenas_avg_puntuacion = $rest->resenas->avg('puntuacion');
+                    return $rest;
+                });
+            }
+            
+            return response()->json([
+                'success' => true,
+                'restaurantes' => $restaurantes,
+                'total' => $restaurantes->count(),
+                'filtros_aplicados' => $request->all()
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'restaurantes' => [],
+                'total' => 0,
+            ], 500);
+        }
     }
 }

@@ -377,11 +377,11 @@ function procesarRegistro(event) {
             if ((result.status === 200 || result.status === 201) && result.data.success) {
                 // Mostrar SweetAlert de éxito
                 Swal.fire({
-                    icon: 'success',
-                    title: '¡Registro exitoso!',
-                    text: result.data.message || '¡Bienvenido a TheFork! Tu cuenta ha sido creada.',
-                    confirmButtonColor: '#0f766e',
-                    confirmButtonText: 'Continuar'
+                    position: "top-end",
+                    icon: "success",
+                    title: "¡Cuenta creada con éxito!",
+                    showConfirmButton: false,
+                    timer: 1500
                 }).then(function () {
                     // Redirigir a la página correspondiente
                     window.location.href = result.data.redirect;
