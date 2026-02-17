@@ -4,12 +4,21 @@ namespace Database\Seeders;
 
 use App\Models\Resena;
 use App\Models\Restaurante;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class ResenasSeeder extends Seeder
 {
     public function run(): void
     {
+        // Obtener usuarios (excepto admin)
+        $usuarios = User::where('email', '!=', 'admin@gmail.com')->pluck('id')->toArray();
+        
+        if (empty($usuarios)) {
+            $this->command->warn('No hay usuarios disponibles para asignar a las reseñas');
+            return;
+        }
+
         $resenas = [
             'Moments - Hotel Mandarin Oriental' => [
                 ['comentario' => 'Una experiencia gastronómica sublime. La cocina de Ruscalleda es pura poesía en el plato.', 'puntuacion' => 10],
@@ -113,6 +122,7 @@ class ResenasSeeder extends Seeder
                     'comentario'      => $resena['comentario'],
                     'puntuacion'      => $resena['puntuacion'],
                     'id_restaurante'  => $restaurante->id,
+                    'id_user'         => $usuarios[array_rand($usuarios)], // Usuario aleatorio
                 ]);
             }
         }

@@ -10,9 +10,6 @@ class Restaurante extends Model
     
     protected $fillable = ['titulo', 'descripcion', 'imagen', 'ubicacion', 'precio', 'cheff', 'menu', 'id_tipo', 'estado'];
     
-    /**
-     * Relación: Un restaurante tiene muchas reservas
-     */
     public function reservas()
     {
         return $this->hasMany(Reserva::class, 'id_restaurante');
@@ -26,5 +23,10 @@ class Restaurante extends Model
     public function tipo()
     {
         return $this->belongsTo(Tipo::class, 'id_tipo');
+    }
+
+    public function etiquetas()
+    {
+        return $this->belongsToMany(Etiqueta::class, 'restaurante_etiquetas', 'id_restaurante', 'id_etiqueta');
     }
 }

@@ -3,6 +3,9 @@
 @section('title', 'TheFork | Restaurantes')
 
 @section('contenido')
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
 <section class="py-10 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
     <div class="max-w-[1300px] mx-auto px-4">
@@ -136,7 +139,11 @@
 
                     {{-- Botón de reserva --}}
                     <div class="mt-4 flex items-center justify-between gap-3">
-                        <button class="flex-1 bg-gradient-to-r from-[#006252] to-[#004d40] text-white px-6 py-3 rounded-xl font-black text-sm hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
+                        <button 
+                            data-btn-reservar
+                            data-id="{{ $restaurante->id }}"
+                            data-titulo="{{ $restaurante->titulo }}"
+                            class="flex-1 bg-gradient-to-r from-[#006252] to-[#004d40] text-white px-6 py-3 rounded-xl font-black text-sm hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
@@ -167,53 +174,85 @@
 
         </div>
     </div>
+
+    {{-- Modal de reserva y reseñas --}}
+    <div id="modal-restaurante-detail" class="hidden fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 px-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col">
+            
+            <div class="bg-[#006252] px-6 py-4 flex justify-between items-center rounded-t-2xl">
+                <h3 id="modal-rest-titulo" class="text-white font-black text-xl"></h3>
+                <button id="btn-cerrar-modal-rest" class="text-white text-2xl">&times;</button>
+            </div>
+
+            <div class="flex border-b">
+                <button id="tab-reserva" class="flex-1 px-4 py-3 text-sm font-bold border-b-2 border-[#006252]">Reservar</button>
+                <button id="tab-resena" class="flex-1 px-4 py-3 text-sm border-b-2 border-transparent text-gray-500">Reseña</button>
+            </div>
+
+            <div class="overflow-y-auto flex-1">
+                <input type="hidden" id="modal-rest-id">
+
+                <div id="content-reserva" class="p-6">
+                    <form id="form-reserva" class="space-y-4">
+                        <div id="error-reserva" class="hidden bg-red-100 text-red-600 p-3 rounded-lg text-sm"></div>
+                        
+                        @guest
+                        <p class="bg-yellow-100 p-3 rounded-lg text-sm">Debes <a href="{{ route('login') }}" class="underline font-bold">iniciar sesión</a></p>
+                        @endguest
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Nombre</label>
+                            <input value="{{ auth()->user()->name ?? '' }}" disabled class="w-full border rounded-lg px-4 py-2 bg-gray-50">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Fecha y hora</label>
+                            <input id="reserva-fecha-hora" type="datetime-local" required class="w-full border rounded-lg px-4 py-2" {{ auth()->guest() ? 'disabled' : '' }}>
+                        </div>
+
+                        <button id="btn-reservar" type="submit" class="w-full bg-[#006252] text-white font-bold py-3 rounded-xl" {{ auth()->guest() ? 'disabled' : '' }}>
+                            Reservar ahora
+                        </button>
+                    </form>
+                </div>
+
+                <div id="content-resena" class="p-6 hidden">
+                    <form id="form-resena" class="space-y-4 mb-6 pb-6 border-b">
+                        <div id="error-resena" class="hidden bg-red-100 text-red-600 p-3 rounded-lg text-sm"></div>
+                        
+                        @guest
+                        <p class="bg-yellow-100 p-3 rounded-lg text-sm">Debes <a href="{{ route('login') }}" class="underline font-bold">iniciar sesión</a></p>
+                        @endguest
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Puntuación (0-10)</label>
+                            <input id="resena-puntuacion" type="number" min="0" max="10" required class="w-full border rounded-lg px-4 py-2" {{ auth()->guest() ? 'disabled' : '' }}>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2">Comentario</label>
+                            <textarea id="resena-comentario" rows="4" required class="w-full border rounded-lg px-4 py-2 resize-none" {{ auth()->guest() ? 'disabled' : '' }}></textarea>
+                        </div>
+
+                        <button id="btn-enviar-resena" type="submit" class="w-full bg-[#006252] text-white font-bold py-3 rounded-xl" {{ auth()->guest() ? 'disabled' : '' }}>
+                            Publicar reseña
+                        </button>
+                    </form>
+
+                    <div>
+                        <h4 class="text-sm font-bold mb-4">Todas las reseñas</h4>
+                        <div id="lista-resenas" class="space-y-4 max-h-64 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </section>
 
-{{-- Script JavaScript para expandir menú --}}
-<script>
-    // Esperar a que cargue el DOM
-    document.onreadystatechange = function() {
-        if (document.readyState === 'complete') {
-            inicializarMenuExpandible();
-        }
-    };
-
-    function inicializarMenuExpandible() {
-        // Obtener todos los botones de "Ver más"
-        const toggleButtons = document.querySelectorAll('.toggle-menu');
-        
-        toggleButtons.forEach(function(button) {
-            button.onclick = function() {
-                // Obtener el ID del menú desde el data attribute
-                const menuId = this.getAttribute('data-menu-id');
-                const menuText = document.getElementById(menuId);
-                const toggleTextSpan = this.querySelector('.toggle-text');
-                const toggleIcon = this.querySelector('.toggle-icon');
-                
-                // Verificar si está expandido
-                const isExpanded = !menuText.classList.contains('line-clamp-2');
-                
-                if (isExpanded) {
-                    // Colapsar
-                    menuText.classList.add('line-clamp-2');
-                    toggleTextSpan.textContent = 'Ver más';
-                    
-                    // Rotar icono hacia abajo
-                    toggleIcon.style.transform = 'rotate(0deg)';
-                } else {
-                    // Expandir
-                    menuText.classList.remove('line-clamp-2');
-                    toggleTextSpan.textContent = 'Ver menos';
-                    
-                    // Rotar icono hacia arriba
-                    toggleIcon.style.transform = 'rotate(180deg)';
-                }
-                
-                // Añadir transición suave
-                toggleIcon.style.transition = 'transform 0.3s ease';
-            };
-        });        
-    }
-</script>
+<script src="{{ asset('js/menu_expandible.js') }}"></script>
+<script src="{{ asset('js/restaurante_modal.js') }}"></script>
+<script src="{{ asset('js/filtros_restaurantes.js') }}"></script>
 
 @endsection

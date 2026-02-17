@@ -94,59 +94,8 @@
             @endauth
         </nav>
 
-        <div class="px-10 pb-4 flex items-center gap-20">
-            
-            <div class="flex items-center border border-gray-300 rounded-full p-1 bg-white shrink-0 relative z-200">
-                
-                <div class="relative dropdown-container">
-                    <button onclick="toggleDropdown('date')" class="flex items-center gap-2 px-4 py-1.5 text-sm font-bold text-gray-700 border-r border-gray-200 hover:bg-gray-50 rounded-l-full transition">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-gray-600"><path d="M17 3h-1V2h-2v1H10V2H8v1H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H7V8h10v11z"/></svg>
-                        <span id="label-date">Fecha</span>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
-                    </button>
 
-                    <div id="drop-date" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-6 w-[340px] z-[300]">
-                        <div class="flex justify-between items-center mb-6">
-                            <button onclick="changeMonth(-1)" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full text-gray-500">❮</button>
-                            <h4 id="month-name" class="font-bold text-[16px] text-gray-800 capitalize select-none">Febrero 2026</h4>
-                            <button onclick="changeMonth(1)" class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-full text-black font-bold">❯</button>
-                        </div>
-                        
-                        <div class="grid grid-cols-7 text-center text-[11px] font-bold text-gray-400 mb-2 uppercase tracking-wide">
-                            <div>lun</div><div>mar</div><div>mié</div><div>jue</div><div>vie</div><div>sáb</div><div>dom</div>
-                        </div>
-
-                        <div id="calendar-grid" class="grid grid-cols-7 text-center gap-y-1 text-[14px]">
-                            </div>
-                    </div>
-                </div>
-
-                <div class="relative dropdown-container">
-                    <button onclick="toggleDropdown('time')" class="flex items-center gap-2 px-4 py-1.5 text-sm font-bold text-gray-700 border-r border-gray-200 hover:bg-gray-50 transition">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-gray-600"><path fill-rule="nonzero" d="M15.53 14.47a.75.75 0 0 1-1.06 1.06l-3-3a.75.75 0 0 1-.22-.53V6a.75.75 0 1 1 1.5 0v5.69l2.78 2.78Z"></path><path d="M12 3c-4.963 0-9 4.037-9 9s4.037 9 9 9 9-4.037 9-9-4.037-9-9-9m0 19.5C6.21 22.5 1.5 17.79 1.5 12S6.21 1.5 12 1.5 22.5 6.21 22.5 12 17.79 22.5 12 22.5"></path></svg>
-                        <span id="label-time">Hora</span>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
-                    </button>
-                    <div id="drop-time" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-[100px] z-[300] max-h-320px overflow-y-auto h-64">
-                        <div id="time-grid" class="flex flex-col gap-1">
-                            </div>
-                    </div>
-                </div>
-
-                <div class="relative dropdown-container">
-                    <button onclick="toggleDropdown('pax')" class="flex items-center gap-2 px-4 py-1.5 text-sm font-bold text-gray-700 hover:bg-gray-50 rounded-r-full transition">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="text-gray-600"><path d="M9 6c0-1.654 1.346-3 3-3s3 1.346 3 3v2.25c0 1.654-1.346 3-3 3s-3-1.346-3-3V6Zm3 6.75c2.481 0 4.5-2.019 4.5-4.5V6c0-2.481-2.019-4.5-4.5-4.5A4.505 4.505 0 0 0 7.5 6v2.25c0 2.481 2.019 4.5 4.5 4.5Z"></path><path d="M15.75 15h-7.5a6.756 6.756 0 0 0-6.75 6.75.75.75 0 0 0 1.5 0 5.256 5.256 0 0 1 5.25-5.25h7.5A5.256 5.256 0 0 1 21 21.75a.75.75 0 0 0 1.5 0A6.756 6.756 0 0 0 15.75 15"></path></svg>
-                        <span id="label-pax">Pers.</span>
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-gray-400"><path d="M7 10l5 5 5-5z"/></svg>
-                    </button>
-                    <div id="drop-pax" class="hidden absolute top-[130%] left-0 bg-white border border-gray-200 rounded-xl shadow-2xl p-2 w-[140px] z-[300] max-h-320px overflow-y-auto h-64">
-                        <div id="pax-grid" class="flex flex-col gap-1">
-                            </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 no-scrollbar flex-1 pl-2">
+            <div class="flex items-center gap-2 no-scrollbar flex-1 pl-2 mb-5 justify-center">
                 <button class="bg-[#00473d] text-white rounded-full px-5 py-2 text-[12px] font-bold flex items-center gap-2 whitespace-nowrap shadow-sm hover:bg-black transition">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
                     Todos los filtros
@@ -216,7 +165,6 @@
                     INSIDER
                 </button>
             </div>        
-        </div>
     </header>
 
     <main>
