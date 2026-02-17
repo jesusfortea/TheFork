@@ -211,21 +211,20 @@ document.getElementById('btn-limpiar-filtros-reservas').onclick = function() {
 };
 
 // ══════════════════════════════════════════════
-//  EVENT LISTENERS PARA FILTROS
+//  EVENTOS PARA FILTROS
 // ══════════════════════════════════════════════
 
 // Inputs de texto con debounce (espera 500ms después de que el usuario deje de escribir)
-document.getElementById('filtro-usuario').addEventListener('input', function() {
+document.getElementById('filtro-usuario').oninput = function() {
     clearTimeout(timeoutFiltroReservas);
     timeoutFiltroReservas = setTimeout(() => aplicarFiltrosReservas(), 500);
-});
+};
 
-document.getElementById('filtro-email-reserva').addEventListener('input', function() {
+document.getElementById('filtro-email-reserva').oninput = function() {
     clearTimeout(timeoutFiltroReservas);
     timeoutFiltroReservas = setTimeout(() => aplicarFiltrosReservas(), 500);
-});
+};
 
 // Selects con aplicación inmediata
-document.getElementById('filtro-restaurante').addEventListener('change', aplicarFiltrosReservas);
-document.getElementById('filtro-fecha-reserva').addEventListener('change', aplicarFiltrosReservas);
-document.getElementById('filtro-fecha-registro').addEventListener('change', aplicarFiltrosReservas);
+document.getElementById('filtro-restaurante').onchange      = aplicarFiltrosReservas;
+document.getElementById('filtro-fecha-reserva').onchange    = aplicarFiltrosReservas;
