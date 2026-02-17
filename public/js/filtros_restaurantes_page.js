@@ -156,9 +156,10 @@ function tarjeta(rest) {
 }
 
 // ── Inicializar todos los eventos ─────────────
-document.addEventListener('DOMContentLoaded', function () {
+document.onreadystatechange = function () {
+    if (document.readyState !== 'complete') return;
 
-    // 1. BUSCADOR - busca al escribir (debounce 500ms) y al pulsar el botón
+    // 1. BUSCADOR
     const inputBuscar = document.getElementById('input-buscar');
     const btnBuscar = document.getElementById('btn-buscar');
     let timeoutBuscar;
@@ -190,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
     }
 
-    // 3. CENA HOY - resetea todos los filtros
+    // 3. CENA HOY
     const btnCenaHoy = document.getElementById('btn-cena-hoy');
     if (btnCenaHoy) {
         btnCenaHoy.onclick = function () {
@@ -214,12 +215,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 5. TIPO DE COCINA
-    document.getElementById('tipo-todos')?.addEventListener('click', function () {
-        filtrosActivos.tipo = null;
-        document.getElementById('label-tipo').textContent = 'Tipo de cocina';
-        document.getElementById('drop-tipo').classList.add('hidden');
-        aplicarFiltros();
-    });
+    const btnTipoTodos = document.getElementById('tipo-todos');
+    if (btnTipoTodos) {
+        btnTipoTodos.onclick = function () {
+            filtrosActivos.tipo = null;
+            document.getElementById('label-tipo').textContent = 'Tipo de cocina';
+            document.getElementById('drop-tipo').classList.add('hidden');
+            aplicarFiltros();
+        };
+    }
 
     document.querySelectorAll('.btn-tipo').forEach(btn => {
         btn.onclick = function () {
@@ -252,4 +256,25 @@ document.addEventListener('DOMContentLoaded', function () {
             aplicarFiltros();
         };
     }
-});
+};
+
+
+// =============================================
+//  DROPDOWNS DEL HEADER
+// =============================================
+
+function toggleDropdown(id) {
+    const ids = ['price', 'tipo'];
+    const target = document.getElementById(`drop-${id}`);
+    const isHidden = target.classList.contains('hidden');
+    ids.forEach(item => document.getElementById(`drop-${item}`).classList.add('hidden'));
+    if (isHidden) target.classList.remove('hidden');
+}
+
+window.onclick = function(event) {
+    if (!event.target.closest('.dropdown-container')) {
+        ['price', 'tipo'].forEach(id => {
+            document.getElementById(`drop-${id}`).classList.add('hidden');
+        });
+    }
+};

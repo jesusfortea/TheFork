@@ -238,23 +238,5 @@
         </div>
     </footer>
 
-    <script>
-        // ── Dropdowns (solo tipo y precio) ─────────
-        function toggleDropdown(id) {
-            const ids = ['price', 'tipo'];
-            const target = document.getElementById(`drop-${id}`);
-            const isHidden = target.classList.contains('hidden');
-            ids.forEach(item => document.getElementById(`drop-${item}`).classList.add('hidden'));
-            if (isHidden) target.classList.remove('hidden');
-        }
-
-        window.onclick = function(event) {
-            if (!event.target.closest('.dropdown-container')) {
-                ['price', 'tipo'].forEach(id => {
-                    document.getElementById(`drop-${id}`).classList.add('hidden');
-                });
-            }
-        }
-    </script>
 </body>
 </html>
