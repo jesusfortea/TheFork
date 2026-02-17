@@ -206,20 +206,20 @@ document.getElementById('btn-limpiar-filtros').onclick = function() {
 };
 
 // ══════════════════════════════════════════════
-//  EVENTOS PARA FILTROS
+//  EVENT LISTENERS PARA FILTROS
 // ══════════════════════════════════════════════
 
 // Inputs de texto con debounce (espera 500ms después de que el usuario deje de escribir)
-document.getElementById('filtro-nombre').oninput = function() {
+document.getElementById('filtro-nombre').addEventListener('input', function() {
     clearTimeout(timeoutFiltro);
     timeoutFiltro = setTimeout(() => aplicarFiltros(), 500);
-};
+});
 
-document.getElementById('filtro-email').oninput = function() {
+document.getElementById('filtro-email').addEventListener('input', function() {
     clearTimeout(timeoutFiltro);
     timeoutFiltro = setTimeout(() => aplicarFiltros(), 500);
-};
+});
 
 // Selects con aplicación inmediata
-document.getElementById('filtro-rol').onchange = aplicarFiltros;
-document.getElementById('filtro-fecha').onchange = aplicarFiltros;
+document.getElementById('filtro-rol').addEventListener('change', aplicarFiltros);
+document.getElementById('filtro-fecha').addEventListener('change', aplicarFiltros);
