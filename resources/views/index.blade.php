@@ -5,19 +5,20 @@
     
     {{-- ¡EMPEZAR CODIGO DESDE AQUI! ---}}
 
-    <div class="relative w-full h-[250px] md:h-[320px] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80');">
+    {{-- SECCIÓN HERO - Optimizada para todos los dispositivos --}}
+    <div class="relative w-full h-[200px] sm:h-[250px] md:h-[320px] lg:h-[380px] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1500&q=80');">
         <div class="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center px-4">
-            <h1 class="text-3xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-md">
+            <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white mb-3 md:mb-4 tracking-tight drop-shadow-md">
                 ¿Qué te apetece hoy?
             </h1>
-            <p class="text-white text-lg font-medium drop-shadow-md">Descubre y reserva el mejor restaurante</p>
+            <p class="text-white text-base md:text-lg lg:text-xl font-medium drop-shadow-md">Descubre y reserva el mejor restaurante</p>
         </div>
     </div>
 
 {{-- SECCIÓN: EXPLORA POR TIPO DE COCINA --}}
-    <div class="max-w-[1300px] mx-auto px-4 -mt-10 relative z-20">
+    <div class="max-w-[1300px] mx-auto px-3 sm:px-4 md:px-6 -mt-8 sm:-mt-10 relative z-20">
         
-        <div class="bg-white rounded-xl shadow-lg border p-6">
+        <div class="bg-white rounded-xl shadow-lg border p-4 sm:p-6">
             
             <div class="flex overflow-x-auto gap-12 pb-4 no-scrollbar scroll-smooth">
                 
@@ -105,8 +106,8 @@
             </div>
 
             <div class="relative">
-                {{-- Contenedor de las Cards --}}
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 @guest blur-md select-none pointer-events-none @endguest">
+                {{-- Contenedor de las Cards - Responsive Grid --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 @guest blur-md select-none pointer-events-none @endguest">
                     
                     @php
                         // Datos de ejemplo para las tarjetas
@@ -176,26 +177,27 @@
     </section>
 
 
-    <section class="pb-16 mt-16">
+    {{-- SECCIÓN: CTA DE DESCARGA DE APP - Mejorado para mobile --}}
+    <section class="pb-8 md:pb-16 mt-8 md:mt-16">
         <div class="max-w-[1300px] mx-auto px-4">
          
-            <div class="bg-[#006252] rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+            <div class="bg-[#006252] rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 flex flex-col md:flex-row items-center gap-6 md:gap-8">
                 
                 <div class="md:w-2/3 text-center md:text-left">
          
-                    <h2 class="text-3xl md:text-5xl font-black text-white">Come fuera con el 50% de descuento</h2>
-                    <p class="text-white/80 text-lg mt-4 mb-8">Reserva en la app y acumula Yums para canjear por comidas gratis.</p>
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight">Come fuera con el 50% de descuento</h2>
+                    <p class="text-white/80 text-base md:text-lg mt-3 md:mt-4 mb-6 md:mb-8">Reserva en la app y acumula Yums para canjear por comidas gratis.</p>
                     
-                    <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                        <button class="bg-black text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-900 transition">App Store</button>
-                        <button class="bg-black text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-900 transition">Google Play</button>
+                    <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-3 md:gap-4">
+                        <button class="bg-black text-white px-6 sm:px-8 py-3 rounded-lg font-bold hover:bg-gray-900 transition w-full sm:w-auto">App Store</button>
+                        <button class="bg-black text-white px-6 sm:px-8 py-3 rounded-lg font-bold hover:bg-gray-900 transition w-full sm:w-auto">Google Play</button>
                     </div>
          
                 </div>
 
                 <div class="md:w-1/3">
          
-                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400" class="w-48 h-auto rounded-3xl border-4 border-black mx-auto shadow-2xl">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400" class="w-32 sm:w-40 md:w-48 h-auto rounded-2xl md:rounded-3xl border-4 border-black mx-auto shadow-2xl">
          
                 </div>
 
@@ -203,14 +205,15 @@
         </div>
     </section>
     
-    <section class="py-16 bg-teal-50">
+    {{-- SECCIÓN: BENEFICIOS - Mejorado spacing mobile --}}
+    <section class="py-10 md:py-16 bg-teal-50">
         <div class="container mx-auto px-4 max-w-6xl">
           
-            <h2 class="text-3xl font-bold text-gray-800 mb-12 text-center">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8 md:mb-12 text-center">
                 ¿Por qué reservar con TheFork?
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           
                 <!-- Benefit 1 -->
                 <div class="text-center">
