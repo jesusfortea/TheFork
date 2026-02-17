@@ -7,6 +7,8 @@ use App\Models\Etiqueta;
 use App\Models\Restaurante;
 use App\Models\Tipo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservaConfirmada;
 
 class RestauranteController extends Controller
 {
@@ -105,28 +107,46 @@ class RestauranteController extends Controller
 
         try {
             $request->validate([
-                'fecha_hora'      => 'required|date|after:now',
-                'id_restaurante'  => 'required|exists:restaurantes,id',
+                'fecha_hora'     => 'required|date|after:now',
+                'id_restaurante' => 'required|exists:restaurantes,id',
             ]);
-            
         } catch (\Illuminate\Validation\ValidationException $e) {
-            $errores = $e->validator->errors()->all();
             return response()->json([
                 'success' => false,
-                'message' => implode(', ', $errores),
+                'message' => implode(', ', $e->validator->errors()->all()),
             ], 422);
         }
 
         try {
             $reserva = \App\Models\Reserva::create([
-                'fecha_hora'      => $request->fecha_hora,
-                'id_user'         => auth()->id(),
-                'id_restaurante'  => $request->id_restaurante,
+                'fecha_hora'     => $request->fecha_hora,
+                'id_user'        => auth()->id(),
+                'id_restaurante' => $request->id_restaurante,
+            ]);
+
+            // Cargar relaciones para el correo
+            $reserva->load(['usuario', 'restaurante']);
+
+            $client = new \GuzzleHttp\Client(['verify' => false]);
+
+            $html = view('emails.reserva-confirmada', ['reserva' => $reserva])->render();
+
+            $client->post('https://api.resend.com/emails', [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . env('RESEND_API_KEY'),
+                    'Content-Type'  => 'application/json',
+                ],
+                'json' => [
+                    'from'    => 'onboarding@resend.dev',
+                    'to'      => [$reserva->usuario->email],
+                    'subject' => '✅ Reserva confirmada - ' . $reserva->restaurante->titulo,
+                    'html'    => $html,
+                ],
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Reserva creada correctamente',
+                'message' => 'Reserva creada correctamente. Te hemos enviado un correo de confirmación.',
                 'reserva' => $reserva,
             ]);
 
