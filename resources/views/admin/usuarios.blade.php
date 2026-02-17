@@ -15,6 +15,88 @@
             <p class="text-gray-500 text-sm">Administra todos los usuarios del sistema</p>
         </div>
 
+        {{-- ══════════════ BARRA DE FILTROS ══════════════ --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-teal-900">🔍 Filtros de Búsqueda</h3>
+                <button id="btn-limpiar-filtros" 
+                        class="text-sm text-teal-700 hover:text-teal-900 font-semibold hover:underline transition">
+                    🔄 Limpiar filtros
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                {{-- Buscar por nombre --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Buscar por nombre
+                    </label>
+                    <input 
+                        type="text" 
+                        id="filtro-nombre" 
+                        placeholder="Ej: Juan Pérez"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition">
+                </div>
+
+                {{-- Buscar por email --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Buscar por email
+                    </label>
+                    <input 
+                        type="text" 
+                        id="filtro-email" 
+                        placeholder="Ej: usuario@ejemplo.com"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition">
+                </div>
+
+                {{-- Filtrar por rol --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Filtrar por rol
+                    </label>
+                    <select 
+                        id="filtro-rol"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todos los roles —</option>
+                        @foreach(\App\Models\Rol::all() as $rol)
+                            <option value="{{ $rol->id }}">{{ $rol->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Filtrar por fecha de registro --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Fecha de registro
+                    </label>
+                    <select 
+                        id="filtro-fecha"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todas las fechas —</option>
+                        <option value="hoy">Hoy</option>
+                        <option value="ultima_semana">Última semana</option>
+                        <option value="ultimo_mes">Último mes</option>
+                        <option value="ultimo_trimestre">Último trimestre</option>
+                        <option value="ultimo_año">Último año</option>
+                    </select>
+                </div>
+
+            </div>
+
+            {{-- Indicador de carga --}}
+            <div id="indicador-carga" class="hidden mt-4 text-center">
+                <div class="inline-flex items-center gap-2 text-teal-700">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold">Filtrando usuarios...</span>
+                </div>
+            </div>
+        </div>
+
         {{-- Tabla --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
@@ -37,7 +119,7 @@
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 text-sm">
+                    <tbody id="tabla-usuarios-body" class="divide-y divide-gray-100 text-sm">
                         @forelse($usuarios as $usuario)
                         <tr id="fila-usuario-{{ $usuario->id }}" class="hover:bg-gray-50 transition">
                             <td class="px-6 py-4 text-gray-400 font-mono">#{{ $usuario->id }}</td>
@@ -58,7 +140,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex justify-center gap-2">
 
-                                    {{-- Botón Editar — sin onclick, el JS lo asigna --}}
+                                    {{-- Botón Editar --}}
                                     <button
                                         data-btn-editar
                                         data-id="{{ $usuario->id }}"
@@ -66,7 +148,7 @@
                                         ✏️ Editar
                                     </button>
 
-                                    {{-- Botón Eliminar — sin onclick, el JS lo asigna --}}
+                                    {{-- Botón Eliminar --}}
                                     @if($usuario->id !== Auth::id())
                                         <button
                                             data-btn-eliminar
@@ -107,7 +189,6 @@
                 <h3 class="text-white font-bold text-lg">✏️ Editar Usuario</h3>
                 <p class="text-teal-300 text-xs mt-0.5">Los cambios se aplican al instante</p>
             </div>
-            {{-- Sin onclick: el JS asigna el evento --}}
             <button id="btn-cerrar-modal"
                     class="text-teal-300 hover:text-white transition text-2xl leading-none">&times;</button>
         </div>
@@ -160,7 +241,6 @@
                         class="flex-1 bg-teal-900 hover:bg-teal-800 text-white font-bold py-2.5 rounded-lg text-sm transition">
                     Guardar cambios
                 </button>
-                {{-- Sin onclick: el JS asigna el evento --}}
                 <button id="btn-cancelar-modal" type="button"
                         class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-lg text-sm transition">
                     Cancelar
@@ -171,6 +251,12 @@
     </div>
 </div>
 
+{{-- Scripts JS --}}
+<script>
+    // Variable global para que filtros_usuarios.js pueda identificar al usuario actual
+    window.USUARIO_ACTUAL_ID = {{ Auth::id() }};
+</script>
 <script src="{{ asset('js/crud_usuarios.js') }}"></script>
+<script src="{{ asset('js/filtros_usuarios.js') }}"></script>
 
 @endsection

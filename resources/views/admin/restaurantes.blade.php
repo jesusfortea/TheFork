@@ -15,6 +15,118 @@
             <p class="text-gray-500 text-sm">Administra todos los restaurantes del sistema</p>
         </div>
 
+        {{-- ══════════════ BARRA DE FILTROS ══════════════ --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-teal-900">🔍 Filtros de Búsqueda</h3>
+                <button id="btn-limpiar-filtros-restaurantes" 
+                        class="text-sm text-teal-700 hover:text-teal-900 font-semibold hover:underline transition">
+                    🔄 Limpiar filtros
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                
+                {{-- Buscar por título --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Buscar por título
+                    </label>
+                    <input 
+                        type="text" 
+                        id="filtro-titulo" 
+                        placeholder="Ej: La Tasquita"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition">
+                </div>
+
+                {{-- Buscar por Chef --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Buscar por Chef
+                    </label>
+                    <input 
+                        type="text" 
+                        id="filtro-chef" 
+                        placeholder="Ej: Gordon Ramsay"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition">
+                </div>
+
+                {{-- Filtrar por tipo --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Tipo de cocina
+                    </label>
+                    <select 
+                        id="filtro-tipo"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todos los tipos —</option>
+                        @foreach(\App\Models\Tipo::orderBy('nombre')->get() as $tipo)
+                            <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Filtrar por estado --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Estado
+                    </label>
+                    <select 
+                        id="filtro-estado"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todos los estados —</option>
+                        <option value="1">Aprobado</option>
+                        <option value="0">Pendiente</option>
+                    </select>
+                </div>
+
+                {{-- Filtrar por precio --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Rango de precio
+                    </label>
+                    <select 
+                        id="filtro-precio"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todos los precios —</option>
+                        <option value="0-20">Económico (0-20€)</option>
+                        <option value="20-40">Moderado (20-40€)</option>
+                        <option value="40-60">Alto (40-60€)</option>
+                        <option value="60-999">Premium (+60€)</option>
+                    </select>
+                </div>
+
+                {{-- Filtrar por fecha --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Fecha de registro
+                    </label>
+                    <select 
+                        id="filtro-fecha-restaurante"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todas las fechas —</option>
+                        <option value="hoy">Hoy</option>
+                        <option value="ultima_semana">Última semana</option>
+                        <option value="ultimo_mes">Último mes</option>
+                        <option value="ultimo_trimestre">Último trimestre</option>
+                        <option value="ultimo_año">Último año</option>
+                    </select>
+                </div>
+
+            </div>
+
+            {{-- Indicador de carga --}}
+            <div id="indicador-carga-restaurantes" class="hidden mt-4 text-center">
+                <div class="inline-flex items-center gap-2 text-teal-700">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold">Filtrando restaurantes...</span>
+                </div>
+            </div>
+        </div>
+
         {{-- Tabla --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
@@ -39,7 +151,7 @@
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 text-sm">
+                    <tbody id="tabla-restaurantes-body" class="divide-y divide-gray-100 text-sm">
                         @forelse($restaurantes as $restaurante)
                         <tr id="fila-restaurante-{{ $restaurante->id }}" class="hover:bg-gray-50 transition">
 
@@ -207,6 +319,8 @@
     </div>
 </div>
 
+{{-- Scripts JS --}}
 <script src="{{ asset('js/crud_restaurantes.js') }}"></script>
+<script src="{{ asset('js/filtros_restaurantes.js') }}"></script>
 
 @endsection

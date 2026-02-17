@@ -15,6 +15,87 @@
             <p class="text-gray-500 text-sm">Administra todas las reservas del sistema</p>
         </div>
 
+        {{-- ══════════════ BARRA DE FILTROS ══════════════ --}}
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-teal-900">🔍 Filtros de Búsqueda</h3>
+                <button id="btn-limpiar-filtros-reservas" 
+                        class="text-sm text-teal-700 hover:text-teal-900 font-semibold hover:underline transition">
+                    🔄 Limpiar filtros
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                
+                {{-- Buscar por usuario --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Buscar por usuario
+                    </label>
+                    <input 
+                        type="text" 
+                        id="filtro-usuario" 
+                        placeholder="Ej: Juan Pérez"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition">
+                </div>
+
+                {{-- Buscar por email --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Buscar por email
+                    </label>
+                    <input 
+                        type="text" 
+                        id="filtro-email-reserva" 
+                        placeholder="Ej: usuario@ejemplo.com"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition">
+                </div>
+
+                {{-- Filtrar por restaurante --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Restaurante
+                    </label>
+                    <select 
+                        id="filtro-restaurante"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todos los restaurantes —</option>
+                        @foreach(\App\Models\Restaurante::orderBy('titulo')->get() as $restaurante)
+                            <option value="{{ $restaurante->id }}">{{ $restaurante->titulo }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Filtrar por rango de fechas de reserva --}}
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">
+                        Fecha de reserva
+                    </label>
+                    <select 
+                        id="filtro-fecha-reserva"
+                        class="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-700 transition bg-white">
+                        <option value="">— Todas las fechas —</option>
+                        <option value="hoy">Hoy</option>
+                        <option value="esta_semana">Esta semana</option>
+                        <option value="este_mes">Este mes</option>
+                        <option value="pasadas">Pasadas</option>
+                        <option value="futuras">Futuras</option>
+                    </select>
+                </div>
+            </div>
+
+            {{-- Indicador de carga --}}
+            <div id="indicador-carga-reservas" class="hidden mt-4 text-center">
+                <div class="inline-flex items-center gap-2 text-teal-700">
+                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span class="text-sm font-semibold">Filtrando reservas...</span>
+                </div>
+            </div>
+        </div>
+
         {{-- Tabla --}}
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
 
@@ -37,7 +118,7 @@
                             <th class="px-6 py-3 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 text-sm">
+                    <tbody id="tabla-reservas-body" class="divide-y divide-gray-100 text-sm">
                         @forelse($reservas as $reserva)
                         <tr id="fila-reserva-{{ $reserva->id }}" class="hover:bg-gray-50 transition">
 
@@ -170,6 +251,8 @@
     </div>
 </div>
 
+{{-- Scripts JS --}}
 <script src="{{ asset('js/crud_reservas.js') }}"></script>
+<script src="{{ asset('js/filtros_reservas.js') }}"></script>
 
 @endsection
