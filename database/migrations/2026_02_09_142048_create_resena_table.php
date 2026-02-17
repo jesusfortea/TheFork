@@ -15,11 +15,15 @@ return new class extends Migration
             $table->id();
             $table->text('comentario');
             $table->integer('puntuacion');
-
-            // -- Id restaurante -- //
+            
+            // ID del usuario que hace la reseña
+            $table->unsignedBigInteger('id_user');
+            $table->foreign('id_user')->references('id')->on('users')->onDelete('cascade');
+            
+            // ID restaurante
             $table->unsignedBigInteger('id_restaurante');
             $table->foreign('id_restaurante')->references('id')->on('restaurantes')->onDelete('cascade');
-
+            
             $table->timestamps();
         });
     }
