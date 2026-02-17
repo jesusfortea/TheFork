@@ -3,139 +3,318 @@
 @section('title', 'TheFork | Crear restaurante')
 @section('contenido')
     
-    {{-- ¡EMPEZAR CODIGO DESDE AQUI! --}}
+    {{-- FORMULARIO DE CREACIÓN DE RESTAURANTE CON DISEÑO PROFESIONAL --}}
 
-    <div class="grid grid-cols-2 gap-5 p-5">
+    {{-- 
+        CONTENEDOR PRINCIPAL CON RESPONSIVE
+        - Desktop: 2 columnas (grid-cols-2)
+        - Tablet: 1 columna (md:grid-cols-1)
+        - Mobile: 1 columna por defecto
+    --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 p-5 md:p-8 lg:p-10">
 
-        <div>
-            <h1 class="text-5xl text-center w-full">Accede a millones de comensales y llena tus mesas vacías</h1>
-        
-            <br>
+        {{-- COLUMNA IZQUIERDA - INFORMACIÓN --}}
+        <div class="order-2 md:order-1">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl text-center md:text-left w-full font-bold text-gray-800 mb-6">
+                Accede a millones de comensales y llena tus mesas vacías
+            </h1>
 
-            <ul class="p-5">
-
-                <li class="pt-2 pb-2 list-disc">Únete a la plataforma de reservas número 1</li>
-                <li class="pt-2 pb-2 list-disc">Abre tus reservas al instante en todos los canales: TheFork, TripAdvisor, tu sitio web, Facebook, Instagram y más</li>
-                <li class="pt-2 pb-2 list-disc">Atrae a más comensales con herramientas de marketing</li>
-
+            <ul class="p-5 space-y-3">
+                <li class="pt-2 pb-2 list-disc text-gray-700 text-base md:text-lg">
+                    Únete a la plataforma de reservas número 1
+                </li>
+                <li class="pt-2 pb-2 list-disc text-gray-700 text-base md:text-lg">
+                    Abre tus reservas al instante en todos los canales: TheFork, TripAdvisor, tu sitio web, Facebook, Instagram y más
+                </li>
+                <li class="pt-2 pb-2 list-disc text-gray-700 text-base md:text-lg">
+                    Atrae a más comensales con herramientas de marketing
+                </li>
             </ul>
-        
-            <br>
             
-            <img src="{{ asset('media/imgTFM.webp') }}" alt="No se ha podido cargar la imagen">
-        
+            <img src="{{ asset('media/imgTFM.webp') }}" alt="TheFork" class="w-full max-w-md mx-auto md:mx-0 mt-6 rounded-lg shadow-lg hidden md:block">
         </div>
 
-        {{-- Formulario para crear un restaurante --}}
-        <form class="bg-[#00665a] p-5 rounded" action="{{ route('enviar.solicitud') }}" method="post" enctype="multipart/form-data">
+        {{-- 
+            COLUMNA DERECHA - FORMULARIO
+            order-1: Se muestra primero en mobile
+            order-2: Se muestra segundo en desktop
+        --}}
+        <div class="order-1 md:order-2">
+            {{-- Formulario para crear un restaurante --}}
+            <form class="bg-[#00665a] p-6 md:p-8 rounded-lg shadow-xl" action="{{ route('enviar.solicitud') }}" method="post" enctype="multipart/form-data">
 
-            @csrf
+                @csrf
 
-            <h1 class="mb-5 mt-5 text-3xl w-full text-white">Registrar mi restaurante</h1>
+                <h1 class="mb-6 text-2xl md:text-3xl w-full text-white font-bold">
+                    🍽️ Registrar mi restaurante
+                </h1>
 
-            @if ($errors->any())
-                <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                    <ul class="list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li class="text-sm">{{ $error }}</li>
-                        @endforeach
-                    </ul>
+                {{-- Mostrar errores de validación si existen --}}
+                @if ($errors->any())
+                    <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+                        <ul class="list-disc list-inside">
+                            @foreach ($errors->all() as $error)
+                                <li class="text-sm">{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                {{-- 
+                    CAMPO DE IMAGEN PERSONALIZADO
+                    - Input file oculto
+                    - Botón personalizado que activa el input
+                    - Preview de la imagen seleccionada
+                --}}
+                <div class="mb-6">
+                    <label class="block text-white font-semibold mb-2">Imagen del restaurante *</label>
+                    
+                    {{-- Contenedor de preview de imagen --}}
+                    <div class="border-2 border-white border-dashed rounded-lg p-6 text-center bg-[#005a4d] hover:bg-[#004d42] transition">
+                        
+                        {{-- Preview de imagen --}}
+                        <div id="preview-container" class="mb-4">
+                            <div class="w-40 h-40 bg-gray-700 mx-auto rounded-lg flex items-center justify-center">
+                                <span class="text-gray-400 text-4xl">📷</span>
+                            </div>
+                            <p class="text-white text-xs mt-2" id="preview-text">Sin imagen</p>
+                        </div>
+
+                        {{-- Input file oculto --}}
+                        <input type="file" 
+                               name="img" 
+                               id="img" 
+                               accept="image/*" 
+                               class="hidden"
+                               onchange="previewImage(event)">
+                        
+                        {{-- Botón personalizado para seleccionar archivo --}}
+                        <label for="img" class="inline-block bg-white text-[#00665a] font-bold py-3 px-6 rounded-lg cursor-pointer hover:bg-gray-100 transition shadow-md">
+                            📁 Seleccionar imagen
+                        </label>
+                        
+                        <p class="text-white text-xs mt-3 opacity-80">
+                            JPG, PNG o WEBP
+                        </p>
+                    </div>
                 </div>
-            @endif
 
-            <div class=" h-60 border-2 rounded content-center text-center">
-                <input class="text-white" type="file" name="img" id="img" accept="image/*">
-            </div>
+                {{-- CAMPO TÍTULO --}}
+                <div class="mb-5">
+                    <label for="titulo" class="block text-white font-semibold mb-2">Título *</label>
+                    <input class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
+                           type="text" 
+                           name="titulo" 
+                           id="titulo" 
+                           value="{{ old('titulo') }}" 
+                           placeholder="Nombre del restaurante..."
+                           required>
+                </div>
 
-            <br>
+                {{-- CAMPO DESCRIPCIÓN --}}
+                <div class="mb-5">
+                    <label for="desc" class="block text-white font-semibold mb-2">Descripción *</label>
+                    <textarea class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300 resize-none" 
+                              name="desc" 
+                              id="desc" 
+                              rows="5" 
+                              placeholder="Describe tu restaurante..."
+                              required>{{ old('desc') }}</textarea>
+                </div>
 
-            <label for="titulo" class="text-white">Título</label><br>
-            <input class="w-full bg-[#00665a] text-white border-2 rounded p-2" type="text" name="titulo" id="titulo" value="{{ old('titulo') }}" placeholder="Escribe algo...">
+                {{-- 
+                    CAMPO TIPO DE COCINA PERSONALIZADO
+                    - Select con estilos personalizados
+                    - Flecha personalizada
+                --}}
+                <div class="mb-5">
+                    <label for="tipo" class="block text-white font-semibold mb-2">Tipo de cocina *</label>
+                    <div class="relative">
+                        <select class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 pr-10 appearance-none cursor-pointer transition" 
+                                name="tipo" 
+                                id="tipo"
+                                required>
+                            <option value="">- Selecciona un tipo -</option>
+                            @foreach($tipos as $tipo)
+                                <option value="{{$tipo->id}}" {{ old('tipo') == $tipo->id ? 'selected' : '' }}>
+                                    {{$tipo->nombre}}
+                                </option>
+                            @endforeach
+                        </select>
+                        {{-- Flecha personalizada para el select --}}
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-white">
+                            <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
 
-            <br><br>
+                {{-- SECCIÓN DE ETIQUETAS INSIGNIA --}}
+                <div class="mb-5">
+                    <label class="block text-white font-semibold mb-2">Etiquetas Insignia</label>
+                    <div class="border-2 border-white rounded-lg p-4 bg-[#005a4d]">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            @foreach ($etiquetas as $etiqueta)
+                                @if ($etiqueta->tipo == "Insignia")
+                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-[#007d6f] p-2 rounded transition">
+                                        <input type="checkbox" 
+                                               name="etiqueta_insignia[]" 
+                                               value="{{ $etiqueta->id }}" 
+                                               class="w-4 h-4 text-yellow-400 bg-gray-700 border-gray-600 rounded focus:ring-yellow-300 focus:ring-2">
+                                        <span class="text-white text-sm">{{ $etiqueta->nombre }}</span>
+                                    </label>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
 
-            <label for="desc" class="text-white">Descripción</label><br>
-            <textarea class="w-full bg-[#00665a] text-white border-2 rounded p-2" name="desc" id="desc" rows="5" placeholder="Escribe algo...">{{ old('desc') }}</textarea>
-                
-            <br><br>
+                {{-- SECCIÓN DE ETIQUETAS DESCRIPTIVAS --}}
+                <div class="mb-5">
+                    <label class="block text-white font-semibold mb-2">Etiquetas Descriptivas</label>
+                    <div class="border-2 border-white rounded-lg p-4 bg-[#005a4d]">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            @foreach ($etiquetas as $etiqueta)
+                                @if ($etiqueta->tipo == "Descriptivo")
+                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-[#007d6f] p-2 rounded transition">
+                                        <input type="checkbox" 
+                                               name="etiqueta[]" 
+                                               value="{{ $etiqueta->id }}" 
+                                               class="w-4 h-4 text-yellow-400 bg-gray-700 border-gray-600 rounded focus:ring-yellow-300 focus:ring-2">
+                                        <span class="text-white text-sm">{{ $etiqueta->nombre }}</span>
+                                    </label>
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
 
-            <label for="tipo" class="text-white">Tipo de cocina</label><br>
-            <select class="w-full bg-[#00665a] text-white border-2 rounded p-2" name="tipo" value="{{ old('tipo') }}" id="tipo">
+                {{-- CAMPO LOCALIZACIÓN --}}
+                <div class="mb-5">
+                    <label for="ubi" class="block text-white font-semibold mb-2">Localización *</label>
+                    <input class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
+                           type="text" 
+                           value="{{ old('ubi') }}" 
+                           name="ubi" 
+                           id="ubi" 
+                           placeholder="Dirección completa..."
+                           required>
+                </div>
 
-                <option value="">- Selecciona un tipo -</option>
+                {{-- CAMPO CHEF --}}
+                <div class="mb-5">
+                    <label for="cheff" class="block text-white font-semibold mb-2">Chef *</label>
+                    <input class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
+                           type="text" 
+                           value="{{ old('cheff') }}" 
+                           name="cheff" 
+                           id="cheff" 
+                           placeholder="Nombre del chef..."
+                           required>
+                </div>
 
-                @foreach($tipos as $tipo)
+                {{-- CAMPO PRECIO --}}
+                <div class="mb-5">
+                    <label for="precio" class="block text-white font-semibold mb-2">Precio medio (€) *</label>
+                    <input type="number" 
+                           class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300" 
+                           value="{{ old('precio') }}" 
+                           name="precio" 
+                           id="precio" 
+                           placeholder="Precio por persona..."
+                           min="1"
+                           required>
+                </div>
 
-                    <option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+                {{-- CAMPO MENÚ --}}
+                <div class="mb-6">
+                    <label for="menu" class="block text-white font-semibold mb-2">Menú *</label>
+                    <textarea class="w-full bg-[#005a4d] text-white border-2 border-white focus:border-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-300 rounded-lg p-3 transition placeholder-gray-300 resize-none" 
+                              name="menu" 
+                              id="menu" 
+                              rows="5" 
+                              placeholder="Platos principales del menú..."
+                              required>{{ old('menu') }}</textarea>
+                </div>
 
-                @endforeach
+                {{-- BOTÓN DE ENVÍO --}}
+                <button type="submit" 
+                        class="w-full p-4 bg-white text-[#00665a] font-bold rounded-lg cursor-pointer hover:bg-yellow-300 hover:shadow-lg transition transform hover:scale-105 text-center">
+                    ✅ Enviar solicitud
+                </button>
 
-            </select>
-            
-            <br><br>
-
-            <label for="etiqueta" class="text-white">Etiquetas Insignia</label><br>
-            <div class="border-2 text-white rounded p-4 grid grid-cols-3 gap-5">
-                @foreach ($etiquetas as $etiqueta)
-                    @if ($etiqueta->tipo == "Insignia")
-                        <label class="block mb-2">
-                            <input type="checkbox" name="etiqueta_insignia[]" value="{{ $etiqueta->id }}" class="mr-2">
-                            <span class="text-white">{{ $etiqueta->nombre }}</span>
-                        </label>
-                    @endif
-                @endforeach
-            </div>
-
-            <br>
-
-            <label for="etiqueta" class="text-white">Etiquetas Descriptivas</label><br>
-            <div class="border-2 rounded p-4 grid grid-cols-3 gap-5">
-                @foreach ($etiquetas as $etiqueta)
-                    @if ($etiqueta->tipo == "Descriptivo")
-                        <label class="block mb-2">
-                            <input type="checkbox" class="text-white" name="etiqueta[]" value="{{ $etiqueta->id }}" class="mr-2">
-                            <span class="text-white">{{ $etiqueta->nombre }}</span>
-                        </label>
-                    @endif
-                @endforeach
-            </div>
-
-            <br>
-
-            <label for="ubi" class="text-white">Localización</label><br>
-            <input class="w-full bg-[#00665a] text-white border-2 rounded p-2" type="text" value="{{ old('ubi') }}" name="ubi" id="ubi" placeholder="Escribe algo...">
-            
-            <br><br>
-
-            <label for="cheff" class="text-white">Cheff</label><br>
-            <input class="w-full bg-[#00665a] text-white border-2 rounded p-2" type="text" value="{{ old('cheff') }}" name="cheff" id="cheff" placeholder="Escribe algo...">
-            
-            <br>
-            <br>
-
-            <label for="precio" class="text-white">Precio</label>
-            <input type="text" class="w-full bg-[#00665a] text-white border-2 rounded p-2" value="{{ old('precio') }}" name="precio" id="precio" placeholder="Escribe algo...">
-
-            <br>
-            <br>
-
-            <label for="menu" class="text-white">Menú</label><br>
-            <textarea class="w-full bg-[#00665a] text-white border-2 rounded p-2" name="menu" id="menu" rows="5" placeholder="Escribe algo...">{{ old('menu') }}</textarea>
-               
-
-            <br>
-            <br>
-
-            
-            <input class="p-3 bg-[#00665a] border-2 cursor-pointer text-white rounded" type="submit" name="crear" id="crear" value="Enviar solicitud">
-
-        </form>
+            </form>
+        </div>
 
     </div>
 
+    {{-- 
+        ESTILOS CSS ADICIONALES PARA PERSONALIZACIÓN
+        - Mejoras visuales para inputs
+        - Animaciones suaves
+    --}}
+    <style>
+        /* Personalización adicional del select para diferentes navegadores */
+        select option {
+            background-color: #00665a;
+            color: white;
+            padding: 10px;
+        }
 
+        select option:hover {
+            background-color: #007d6f;
+        }
 
-    
+        /* Animación de focus para todos los inputs */
+        input:focus, textarea:focus, select:focus {
+            transform: scale(1.01);
+        }
 
+        /* Estilo para el placeholder */
+        ::placeholder {
+            opacity: 0.7;
+        }
+
+        /* Responsive: ocultar imagen decorativa en móviles para ahorrar espacio */
+        @media (max-width: 768px) {
+            .order-2 img {
+                display: none;
+            }
+        }
+    </style>
+
+    {{-- JAVASCRIPT PARA PREVIEW DE IMAGEN --}}
+    <script>
+        /**
+         * Función para mostrar preview de la imagen seleccionada
+         * Se ejecuta cuando el usuario selecciona un archivo
+         * @param {Event} event - Evento del input file
+         */
+        function previewImage(event) {
+            const input = event.target;
+            const container = document.getElementById('preview-container');
+            const previewText = document.getElementById('preview-text');
+            
+            // Verificar si se seleccionó un archivo
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                // Cuando la imagen se carga, actualizar el preview
+                reader.onload = function(e) {
+                    // Actualizar el contenedor con la nueva imagen
+                    container.innerHTML = `
+                        <img src="${e.target.result}" 
+                             id="image-preview"
+                             class="w-40 h-40 object-cover mx-auto rounded-lg shadow-md">
+                        <p class="text-white text-xs mt-2">Imagen seleccionada ✓</p>
+                    `;
+                };
+                
+                // Leer el archivo como URL de datos
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 
 @endsection
