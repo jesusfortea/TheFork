@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::controller(RestauranteController::class)->group(function(){
 
     Route::get('/crear-restaurante', 'index')->name('crear.restaurante');
-    Route::get('/restaurantes', 'show')->name('show.restaurante');
+    Route::get('/restaurantes', 'show')->middleware('auth')->name('show.restaurante');
     Route::post('/solicitud-restaurante', 'solicitud')->name('enviar.solicitud');
     
     // Ruta para mostrar el formulario de edición de un restaurante
@@ -65,7 +65,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function() {
     Route::put('/usuarios/{id}', [AdminController::class, 'actualizarUsuario'])->name('usuarios.actualizar');
     Route::delete('/usuarios/{id}', [AdminController::class, 'eliminarUsuario'])->name('usuarios.eliminar');
     
-    Route::get('/restaurantes', [AdminController::class, 'restaurantes'])->name('restaurantes');
+    Route::get('/restaurantes', [AdminController::class, 'restaurantes'])->middleware('auth')->name('restaurantes');
     Route::get('/restaurantes/filtrar', [AdminController::class, 'filtrarRestaurantes'])->name('restaurantes.filtrar');
     Route::put('/restaurantes/{id}',    [AdminController::class, 'actualizarRestaurante'])->name('restaurantes.actualizar');
     Route::delete('/restaurantes/{id}', [AdminController::class, 'eliminarRestaurante'])->name('restaurantes.eliminar');
