@@ -7,6 +7,7 @@ use App\Models\Restaurante;
 use App\Models\Reserva;
 use App\Models\Rol;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -422,6 +423,282 @@ class AdminController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Rol eliminado correctamente.',
+        ]);
+    }
+
+
+
+
+    /**
+    * Filtrar usuarios con AJAX * 
+    * Este método procesa los filtros enviados desde el frontend y retorna
+    * los usuarios que coinciden con los criterios de búsqueda
+    */
+    public function filtrarUsuarios(Request $request)
+    {
+        // Iniciar query
+        $query = \App\Models\User::with('rol');
+
+        // ────────────────────────────────────────────
+        // FILTRO: Buscar por nombre
+        // ────────────────────────────────────────────
+        if ($request->filled('nombre')) {
+            $query->where('name', 'LIKE', '%' . $request->nombre . '%');
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Buscar por email
+        // ────────────────────────────────────────────
+        if ($request->filled('email')) {
+            $query->where('email', 'LIKE', '%' . $request->email . '%');
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por rol
+        // ────────────────────────────────────────────
+        if ($request->filled('rol')) {
+            $query->where('rol_id', $request->rol);
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por fecha de registro
+        // ────────────────────────────────────────────
+        if ($request->filled('fecha')) {
+            $now = now();
+            
+            switch ($request->fecha) {
+                case 'hoy':
+                    $query->whereDate('created_at', $now->toDateString());
+                    break;
+                    
+                case 'ultima_semana':
+                    $query->where('created_at', '>=', $now->subWeek());
+                    break;
+                    
+                case 'ultimo_mes':
+                    $query->where('created_at', '>=', $now->subMonth());
+                    break;
+                    
+                case 'ultimo_trimestre':
+                    $query->where('created_at', '>=', $now->subMonths(3));
+                    break;
+                    
+                case 'ultimo_año':
+                    $query->where('created_at', '>=', $now->subYear());
+                    break;
+            }
+        }
+
+        // Ejecutar query y obtener usuarios
+        $usuarios = $query->orderBy('created_at', 'desc')->get();
+
+        // Retornar JSON
+        return response()->json([
+            'success'  => true,
+            'usuarios' => $usuarios,
+            'total'    => $usuarios->count()
+        ]);
+    }
+
+
+
+
+    /**
+    * Filtrar restaurantes con AJAX
+    * 
+    * Este método procesa los filtros enviados desde el frontend y retorna
+    * los restaurantes que coinciden con los criterios de búsqueda
+    */
+    public function filtrarRestaurantes(Request $request)
+    {
+        // Iniciar query
+        $query = \App\Models\Restaurante::with('tipo');
+
+        // ────────────────────────────────────────────
+        // FILTRO: Buscar por título
+        // ────────────────────────────────────────────
+        if ($request->filled('titulo')) {
+            $query->where('titulo', 'LIKE', '%' . $request->titulo . '%');
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Buscar por chef
+        // ────────────────────────────────────────────
+        if ($request->filled('chef')) {
+            $query->where('cheff', 'LIKE', '%' . $request->chef . '%');
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por tipo de cocina
+        // ────────────────────────────────────────────
+        if ($request->filled('tipo')) {
+            $query->where('id_tipo', $request->tipo);
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por estado
+        // ────────────────────────────────────────────
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado == '1');
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por rango de precio
+        // ────────────────────────────────────────────
+        if ($request->filled('precio')) {
+            $rangos = explode('-', $request->precio);
+            if (count($rangos) === 2) {
+                $min = (int) $rangos[0];
+                $max = (int) $rangos[1];
+                $query->whereBetween('precio', [$min, $max]);
+            }
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por fecha de registro
+        // ────────────────────────────────────────────
+        if ($request->filled('fecha')) {
+            $now = now();
+            
+            switch ($request->fecha) {
+                case 'hoy':
+                    $query->whereDate('created_at', $now->toDateString());
+                    break;
+                    
+                case 'ultima_semana':
+                    $query->where('created_at', '>=', $now->subWeek());
+                    break;
+                    
+                case 'ultimo_mes':
+                    $query->where('created_at', '>=', $now->subMonth());
+                    break;
+                    
+                case 'ultimo_trimestre':
+                    $query->where('created_at', '>=', $now->subMonths(3));
+                    break;
+                    
+                case 'ultimo_año':
+                    $query->where('created_at', '>=', $now->subYear());
+                    break;
+            }
+        }
+
+        // Ejecutar query y obtener restaurantes
+        $restaurantes = $query->orderBy('created_at', 'desc')->get();
+
+        // Retornar JSON
+        return response()->json([
+            'success'       => true,
+            'restaurantes'  => $restaurantes,
+            'total'         => $restaurantes->count()
+        ]);
+    }
+
+
+
+
+    /**
+    * Filtrar reservas con AJAX
+    * 
+    * Este método procesa los filtros enviados desde el frontend y retorna
+    * las reservas que coinciden con los criterios de búsqueda
+    */
+    
+    public function filtrarReservas(Request $request)
+    {
+        // Iniciar query
+        $query = \App\Models\Reserva::with(['usuario', 'restaurante']);
+
+        // ────────────────────────────────────────────
+        // FILTRO: Buscar por nombre de usuario
+        // ────────────────────────────────────────────
+        if ($request->filled('usuario')) {
+            $query->whereHas('usuario', function($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->usuario . '%');
+            });
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Buscar por email
+        // ────────────────────────────────────────────
+        if ($request->filled('email')) {
+            $query->whereHas('usuario', function($q) use ($request) {
+                $q->where('email', 'LIKE', '%' . $request->email . '%');
+            });
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por restaurante
+        // ────────────────────────────────────────────
+        if ($request->filled('restaurante')) {
+            $query->where('id_restaurante', $request->restaurante);
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por fecha de reserva
+        // ────────────────────────────────────────────
+        if ($request->filled('fecha_reserva')) {
+            $now = now();
+            
+            switch ($request->fecha_reserva) {
+                case 'hoy':
+                    $query->whereDate('fecha_hora', $now->toDateString());
+                    break;
+                    
+                case 'esta_semana':
+                    $startOfWeek = $now->copy()->startOfWeek();
+                    $endOfWeek   = $now->copy()->endOfWeek();
+                    $query->whereBetween('fecha_hora', [$startOfWeek, $endOfWeek]);
+                    break;
+                    
+                case 'este_mes':
+                    $query->whereYear('fecha_hora', $now->year)
+                        ->whereMonth('fecha_hora', $now->month);
+                    break;
+                    
+                case 'pasadas':
+                    $query->where('fecha_hora', '<', $now);
+                    break;
+                    
+                case 'futuras':
+                    $query->where('fecha_hora', '>=', $now);
+                    break;
+            }
+        }
+
+        // ────────────────────────────────────────────
+        // FILTRO: Filtrar por fecha de registro
+        // ────────────────────────────────────────────
+        if ($request->filled('fecha_registro')) {
+            $now = now();
+            
+            switch ($request->fecha_registro) {
+                case 'hoy':
+                    $query->whereDate('created_at', $now->toDateString());
+                    break;
+                    
+                case 'ultima_semana':
+                    $query->where('created_at', '>=', $now->subWeek());
+                    break;
+                    
+                case 'ultimo_mes':
+                    $query->where('created_at', '>=', $now->subMonth());
+                    break;
+                    
+                case 'ultimo_trimestre':
+                    $query->where('created_at', '>=', $now->subMonths(3));
+                    break;
+            }
+        }
+
+        // Ejecutar query y obtener reservas
+        $reservas = $query->orderBy('fecha_hora', 'desc')->get();
+
+        // Retornar JSON
+        return response()->json([
+            'success'  => true,
+            'reservas' => $reservas,
+            'total'    => $reservas->count()
         ]);
     }
 }
