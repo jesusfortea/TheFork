@@ -31,7 +31,7 @@ class CrearRestauranteRequest extends FormRequest
             'etiqueta' => ['nullable', 'array'],
             'precio' => ['required', 'numeric', 'min:0'],
             'menu' => ['required'],
-            'img' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120']
+            'img' => ['required', 'image', 'mimes:jpeg,png,jpg,webp']
         ];
     }
 
@@ -51,7 +51,6 @@ class CrearRestauranteRequest extends FormRequest
             'img.required' => 'Debes subir una imagen.',
             'img.image' => 'El archivo debe ser una imagen válida.',
             'img.mimes' => 'Solo se permiten imágenes jpeg, png, jpg o webp.',
-            'img.max' => 'La imagen no puede pesar más de 5MB.',
         ];
     }
 
